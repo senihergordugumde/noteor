@@ -13,12 +13,56 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
 
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
-        // Use this method to optionally configure and attach the UIWindow `window` to the provided UIWindowScene `scene`.
-        // If using a storyboard, the `window` property will automatically be initialized and attached to the scene.
-        // This delegate does not imply the connecting scene or session are new (see `application:configurationForConnectingSceneSession` instead).
-        guard let _ = (scene as? UIWindowScene) else { return }
+        guard let windowScene = (scene as? UIWindowScene) else { return }
+        
+        window = UIWindow(frame: windowScene.coordinateSpace.bounds)
+        window?.windowScene = windowScene
+        window?.rootViewController = createTabbar()
+        window?.makeKeyAndVisible()
+        
+        
+        
     }
 
+
+
+    
+    
+    
+    
+    
+    func createMainNC() -> UINavigationController{
+        let mainViewController = ViewController()
+        return UINavigationController(rootViewController: mainViewController)
+        
+    }
+    
+    
+     func createHomeNC() -> UINavigationController{
+        let homeVC = HomeVC()
+        
+        homeVC.tabBarItem = UITabBarItem(tabBarSystemItem: .bookmarks, tag: 0)
+        UINavigationBar.appearance().backgroundColor =  .secondarySystemBackground
+        UINavigationBar.appearance().tintColor =  .secondaryLabel
+        
+        return UINavigationController(rootViewController: homeVC)
+    }
+    
+    
+    
+    
+     func createTabbar() -> UITabBarController{
+        
+        let tabbar = UITabBarController()
+        tabbar.viewControllers = [createHomeNC()]
+         UITabBar.appearance().tintColor = .secondaryLabel
+         UITabBar.appearance().backgroundColor =  .secondarySystemBackground
+         UITabBar.appearance().layer.cornerRadius = 10
+    
+        return tabbar
+        
+    }
+    
     func sceneDidDisconnect(_ scene: UIScene) {
         // Called as the scene is being released by the system.
         // This occurs shortly after the scene enters the background, or when its session is discarded.
