@@ -17,6 +17,18 @@ struct Notes : Identifiable, Codable{
     var Descr : String
     var Lock : Bool
     var Categ : String
+    var StartDate : Date
+    var EndDate : Date
+
+    var tasks : [tasks]
+   
     
-    
+}
+
+
+
+
+struct tasks : Codable {
+    var taskName : String
+    var taskStatus : Bool
 }

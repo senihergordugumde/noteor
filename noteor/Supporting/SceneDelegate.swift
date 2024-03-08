@@ -28,6 +28,13 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     
     
+    func createHomeNC() -> UINavigationController{
+        let homeVC = HomeVC()
+        
+        homeVC.tabBarItem = UITabBarItem(tabBarSystemItem: .recents, tag: 0)
+        return UINavigationController(rootViewController: homeVC)
+        
+    }
     
     
     
@@ -38,26 +45,23 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     }
     
     
-     func createHomeNC() -> UINavigationController{
-        let homeVC = HomeVC()
+    func createNotesNC() -> UINavigationController{
+        let NotesVC = NotesVC()
         
-        homeVC.tabBarItem = UITabBarItem(tabBarSystemItem: .bookmarks, tag: 0)
-        UINavigationBar.appearance().backgroundColor =  .secondarySystemBackground
-        UINavigationBar.appearance().tintColor =  .secondaryLabel
+        NotesVC.tabBarItem = UITabBarItem(tabBarSystemItem: .bookmarks, tag: 1)
+        return UINavigationController(rootViewController: NotesVC)
         
-        return UINavigationController(rootViewController: homeVC)
     }
-    
-    
     
     
      func createTabbar() -> UITabBarController{
         
         let tabbar = UITabBarController()
-        tabbar.viewControllers = [createHomeNC()]
-         UITabBar.appearance().tintColor = .secondaryLabel
+        tabbar.viewControllers = [createHomeNC(),createNotesNC()]
+         UITabBar.appearance().tintColor = UIColor(named: "Red")
          UITabBar.appearance().backgroundColor =  .secondarySystemBackground
          UITabBar.appearance().layer.cornerRadius = 10
+         UITabBar.appearance()
     
         return tabbar
         

@@ -8,11 +8,139 @@
 import UIKit
 import FirebaseFirestore
 import FirebaseAuth
-class AddItemVC: UIViewController,UIPickerViewDelegate,UIPickerViewDataSource{
+
+
+class AddItemVC: UIViewController,UIPickerViewDelegate,UIPickerViewDataSource, UITableViewDataSource, UITableViewDelegate, UITextFieldDelegate{
+  
     
-    let noteCategories = ["School","Work","Food","Sport","Special Days"]
+    
+    let noteCategories = ["Work","Food","Gym"]
     var selectedCateg : String?
     
+    
+    
+    var note : Notes?
+  
+    let pickerView = UIPickerView()
+    
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        
+        configure()
+        setData()
+      
+
+    }
+    
+    
+    //MARK: - Configure UI
+    private func configure(){
+        let saveButton =  UIBarButtonItem(image: UIImage(systemName: "checkmark"), style: .done, target: self, action:  #selector(saveClicked))
+        
+        let editButton =  UIBarButtonItem(image: UIImage(systemName: "pencil"), style: .done, target: self, action:  #selector(editClicked))
+
+        let trashButton =  UIBarButtonItem(image: UIImage(systemName: "trash"), style: .done, target: self, action: #selector(trashClicked))
+        let topRightButtons = [saveButton,editButton,trashButton]
+
+        self.navigationController?.navigationBar.prefersLargeTitles = true
+        self.navigationItem.title = "Add Note"
+        
+        view.backgroundColor = .systemBackground
+        
+  
+        
+        self.navigationItem.rightBarButtonItems = topRightButtons
+        self.navigationController?.isNavigationBarHidden = false
+       
+
+        self.navigationItem.leftBarButtonItem = UIBarButtonItem(image: UIImage(named: "arrow-left")!.resized(toWidth: 40), style: .done, target: self, action: #selector(backButton))
+        configureTitleInput()
+        configureTodoAdd()
+        configureNoteInput()
+        //configurePickerView()
+        configureScrollView()
+        configureStartDate()
+        configureEndDate()
+
+    }
+    
+    @objc func backButton(){
+        self.navigationController?.popToRootViewController(animated: true)
+    }
+    
+    
+    
+    //MARK: - Scrollview
+    private let scrollView : UIScrollView = {
+       
+        let view = UIScrollView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        
+        return view
+        
+    }()
+    
+    private func configureScrollView(){
+        
+        view.addSubview(scrollView)
+        scrollView.addSubview(mainView)
+        
+        NSLayoutConstraint.activate([
+        
+            scrollView.topAnchor.constraint(equalTo: view.topAnchor),
+            scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+            
+        
+        ])
+        
+        NSLayoutConstraint.activate([
+        
+            mainView.topAnchor.constraint(equalTo: scrollView.topAnchor),
+            mainView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor),
+            mainView.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor),
+            mainView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor),
+            mainView.widthAnchor.constraint(equalTo: scrollView.widthAnchor)
+        
+        ])
+        
+    }
+    
+    //MARK: - MainView
+    private let mainView : UIView = {
+     
+        let view = UIView()
+        
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.heightAnchor.constraint(equalToConstant: 1000).isActive = true
+        return view
+        
+    }()
+    
+    //MARK: - SetDATA
+
+    private func setData(){
+        guard let note = note else {return}
+        
+        startDate.text = note.StartDate.formatted(date: .complete, time: .omitted)
+        endDate.text = note.EndDate.formatted(date: .complete, time: .omitted)
+        titleInput.text = note.Title
+        noteInput.text = note.Descr
+        EditVC.lock = note.Lock
+        EditVC.selectedColor = note.Color
+        toDoList = note.tasks
+        DispatchQueue.main.async {
+            self.tableViewHeight?.constant = CGFloat(50 * self.toDoList.count)
+
+            self.tableView.reloadData()
+            self.mainView.layoutIfNeeded()
+        }
+    
+    }
+    //MARK: - PickerView
+
     func numberOfComponents(in pickerView: UIPickerView) -> Int {
         return 1
     }
@@ -28,31 +156,12 @@ class AddItemVC: UIViewController,UIPickerViewDelegate,UIPickerViewDataSource{
         self.selectedCateg = noteCategories[row]
     }
     
-    var note : Notes?
-  
-    let titleInput = EATextField(placeholder: "Notes Title", isSecureTextEntry: false, textAlignment: .center)
-    let noteInput = EATextView(placeholder: "Your Note Here")
-    let pickerView = UIPickerView()
     
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
-
-        configure()
-        setData()
-    }
-    
-    private func setData(){
-        guard let note = note else {return}
-        titleInput.text = note.Title
-        noteInput.text = note.Descr
-        EditVC.lock = note.Lock
-        EditVC.selectedColor = note.Color
-        
-    }
     
     private func configurePickerView(){
-        view.addSubview(pickerView)
+        
+    
+        mainView.addSubview(pickerView)
         
         pickerView.delegate = self
         pickerView.dataSource = self
@@ -67,44 +176,47 @@ class AddItemVC: UIViewController,UIPickerViewDelegate,UIPickerViewDataSource{
         
         ])
         
+        guard let selectedCateg = selectedCateg else { return }
+        
+        
+        
     }
     
-    private func configure(){
-        let saveButton =  UIBarButtonItem(image: UIImage(systemName: "checkmark"), style: .done, target: self, action:  #selector(saveClicked))
-        
-        let editButton =  UIBarButtonItem(image: UIImage(systemName: "highlighter"), style: .done, target: self, action:  #selector(editClicked))
-
-        let trashButton =  UIBarButtonItem(image: UIImage(systemName: "trash"), style: .done, target: self, action: #selector(trashClicked))
-        let topRightButtons = [saveButton,editButton,trashButton]
-
-        self.navigationController?.navigationBar.prefersLargeTitles = true
-        self.navigationItem.title = "Add Note"
-        
-        view.backgroundColor = .systemBackground
-        
   
-        
-        self.navigationItem.rightBarButtonItems = topRightButtons
-
-
-        configureTitleInput()
-        configureNoteInput()
-        configurePickerView()
-        
-    }
     
-    
+    //MARK: - TitleInput
+    let titleText = EATitle(textAlignment: .left, fontSize: 24)
+
+    let titleInput = EATextField(placeholder: "Notes Title", isSecureTextEntry: false, textAlignment: .center)
     private func configureTitleInput(){
-        view.addSubview(titleInput)
-        titleInput.backgroundColor = .systemBackground
+        titleText.text = "Task Title*"
+        mainView.addSubview(titleText)
+        mainView.addSubview(titleInput)
+        NSLayoutConstraint.activate([
+            
+            titleText.bottomAnchor.constraint(equalTo: titleInput.topAnchor, constant: -20),
+            titleText.leadingAnchor.constraint(equalTo: titleInput.leadingAnchor),
+            titleText.heightAnchor.constraint(equalToConstant: 30),
+            titleText.widthAnchor.constraint(equalToConstant: 200)
         
+        ])
+        
+        let titleLogo = UIImageView(frame: CGRectMake(10, 0, 20, 20))
+        titleLogo.image = UIImage(named: "titleTag")?.resized(toWidth: 50)
+        
+      
+
+        titleInput.backgroundColor = .systemGray6
+        titleInput.leftViewMode = .always
+        titleInput.leftView = titleLogo
+        titleInput.layer.borderWidth = 0
         
         NSLayoutConstraint.activate([
             
-            titleInput.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 50),
+            titleInput.topAnchor.constraint(equalTo: mainView.safeAreaLayoutGuide.topAnchor, constant: 80),
             
-            titleInput.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            titleInput.widthAnchor.constraint(equalToConstant: 300),
+            titleInput.leadingAnchor.constraint(equalTo: mainView.leadingAnchor, constant: 20),
+            titleInput.trailingAnchor.constraint(equalTo: mainView.trailingAnchor, constant: -20),
             titleInput.heightAnchor.constraint(equalToConstant: 50)
             
             
@@ -112,30 +224,341 @@ class AddItemVC: UIViewController,UIPickerViewDelegate,UIPickerViewDataSource{
         
         
     }
+    //MARK: - Todo Add
+    
+    let tableView = UITableView()
+
+    var tableViewHeight : NSLayoutConstraint?
+    var toDoList = [tasks]()
+    
+    let addButton = EAButton(title: "", backgroundColor: .clear, cornerRadius: 0)
+    
+    let todoTextField = EATextField(placeholder: "Enter Your Task 🥹", isSecureTextEntry: false, textAlignment: .center)
     
     
+    private func configureTableView(){
+        //MARK: - Configure Todo tableView
+
+        tableView.translatesAutoresizingMaskIntoConstraints = false
+        tableView.delegate = self
+        tableView.dataSource = self
+        tableView.backgroundColor = .white
+        tableView.register(toDoCell.self, forCellReuseIdentifier: toDoCell.id)
+        
+        mainView.addSubview(tableView)
+        NSLayoutConstraint.activate([
+        
+            tableView.topAnchor.constraint(equalTo: todoTextField.bottomAnchor, constant: 20),
+            
+            tableView.leadingAnchor.constraint(equalTo: todoTextField.leadingAnchor),
+            tableView.trailingAnchor.constraint(equalTo: todoTextField.trailingAnchor),
+            
+        ])
+        
+        tableViewHeight = tableView.heightAnchor.constraint(equalToConstant: 0)
+        
+        tableViewHeight?.isActive = true
+    }
+    
+    
+    
+    //MARK: -  Todo Table View Delegate
 
     
-    private func configureNoteInput(){
-        view.addSubview(noteInput)
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        toDoList.count
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: toDoCell.id, for: indexPath) as! toDoCell
         
+        cell.set(task: toDoList[indexPath.row])
+        
+        cell.action = {
+            
+            if self.toDoList[indexPath.row].taskStatus {
+                self.toDoList[indexPath.row].taskStatus = false
+                
+                DispatchQueue.main.async {
+                    cell.deleteButton.setImage(UIImage(named: "closeDetail"), for: .normal)
+
+                }
+
+            }
+            
+            else {
+                self.toDoList[indexPath.row].taskStatus = true
+                
+                DispatchQueue.main.async {
+                    cell.deleteButton.setImage(UIImage(named: "checkDetail"), for: .normal)
+
+                }
+
+
+            }
+
+        }
+        
+        
+        return cell
+    }
+    
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 50
+    }
+    
+    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+        
+        
+        
+        if editingStyle == .delete{
+            
+            
+            
+            self.toDoList.remove(at: indexPath.row)
+            
+            tableView.deleteRows(at: [indexPath], with: .fade)
+            
+            self.tableViewHeight?.constant = CGFloat(50 * self.toDoList.count)
+            UIView.animate(withDuration: 1.0) {
+                
+                self.mainView.layoutIfNeeded()
+                
+    
+            
+            }
+            
+            
+            
+        }
+        self.tableView.reloadData()
+    }
+    
+    
+    let taskAddText = EATitle(textAlignment: .left, fontSize: 24)
+
+    private func configureTodoAdd(){
+        //MARK: - Configure Todo Add
+        taskAddText.text = "Task Add"
+        addButton.setImage(UIImage(named: "add"), for: .normal)
+        
+        mainView.addSubview(addButton)
+        mainView.addSubview(todoTextField)
+        mainView.addSubview(taskAddText)
         
         NSLayoutConstraint.activate([
             
-            noteInput.topAnchor.constraint(equalTo: titleInput.bottomAnchor, constant: 20),
+            taskAddText.leadingAnchor.constraint(equalTo: titleInput.leadingAnchor),
+            taskAddText.topAnchor.constraint(equalTo: titleInput.bottomAnchor, constant: 20),
+            taskAddText.heightAnchor.constraint(equalToConstant: 28),
+            taskAddText.widthAnchor.constraint(equalToConstant: 200),
+        
+            addButton.topAnchor.constraint(equalTo: taskAddText.bottomAnchor, constant: 20),
+            addButton.leadingAnchor.constraint(equalTo: titleInput.leadingAnchor),
+            addButton.widthAnchor.constraint(equalToConstant: 40),
+            addButton.heightAnchor.constraint(equalToConstant: 40)
+        
+        
+        ])
+        
+        addButton.addTarget(self, action: #selector(todoAddClicked), for: .touchUpInside)
+        
+        NSLayoutConstraint.activate([
+        
+            todoTextField.topAnchor.constraint(equalTo: addButton.topAnchor),
+            todoTextField.trailingAnchor.constraint(equalTo: titleInput.trailingAnchor),
+            todoTextField.leadingAnchor.constraint(equalTo: addButton.trailingAnchor, constant: 20),
+            todoTextField.heightAnchor.constraint(equalToConstant: 40)
+        
+        
+        ])
+        
+        todoTextField.backgroundColor = .systemGray6
+        todoTextField.leftViewMode = .always
+        todoTextField.layer.borderWidth = 0
+        
+     
+        configureTableView()
+        
+    }
+
+    
+    @objc func todoAddClicked(){
+        //MARK: - Todo Add Clicked
+
+        if let todo = todoTextField.text, !todo.isEmpty {
             
-            noteInput.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            noteInput.widthAnchor.constraint(equalToConstant: 300),
-            noteInput.heightAnchor.constraint(equalToConstant: 200)
+            toDoList.append(tasks(taskName: todo, taskStatus: false))
+            
+            
+            DispatchQueue.main.async {
+      
+                self.tableViewHeight?.constant = CGFloat(50 * self.toDoList.count)
+                UIView.animate(withDuration: 1.0) {
+                    
+                    self.mainView.layoutIfNeeded()
+                }
+                
+                self.tableView.reloadData()
+
+            }
+                
+            
+        }else{
+            makeEAAlert(alertTitle: "Text Is Empty", alertLabel: "Task Text Cannot Be Empty 🥲")
+        }
+    }
+    
+    
+        
+    //MARK: - NoteInput
+    let noteInput = EATextView(placeholder: "")
+    let descrText = EATitle(textAlignment: .left, fontSize: 24)
+    let image = UIImageView(image: UIImage(named: "description"))
+    
+    private func configureNoteInput(){
+        descrText.text = "Description"
+        
+        mainView.addSubview(noteInput)
+        mainView.addSubview(image)
+        mainView.addSubview(descrText)
+        image.translatesAutoresizingMaskIntoConstraints = false
+        noteInput.backgroundColor = .systemGray6
+        noteInput.layer.borderWidth = 0
+        NSLayoutConstraint.activate([
+            
+            descrText.leadingAnchor.constraint(equalTo: image.leadingAnchor),
+            descrText.topAnchor.constraint(equalTo: tableView.bottomAnchor, constant: 20),
+            descrText.heightAnchor.constraint(equalToConstant: 28),
+            descrText.widthAnchor.constraint(equalToConstant: 200),
+            
+            
+            noteInput.topAnchor.constraint(equalTo: descrText.bottomAnchor, constant: 20),
+            noteInput.leadingAnchor.constraint(equalTo: titleInput.leadingAnchor,constant: 50),
+            noteInput.trailingAnchor.constraint(equalTo: mainView.trailingAnchor, constant: -20),
+            noteInput.heightAnchor.constraint(equalToConstant: 200),
+            
+            image.topAnchor.constraint(equalTo: noteInput.topAnchor),
+            image.leadingAnchor.constraint(equalTo: titleInput.leadingAnchor),
+            image.widthAnchor.constraint(equalToConstant: 35),
+            image.heightAnchor.constraint(equalToConstant: 35)
+            
             
             
         ])
         
         
     }
+    
+    
+    //MARK: - Start Date
+    
+    let startDate = EATextField(placeholder: "--:--", isSecureTextEntry: false, textAlignment: .center)
+    let startTimeText = EATitle(textAlignment: .left, fontSize: 16)
+    
+    private func configureStartDate(){
+        startDate.delegate = self
+        mainView.addSubview(startTimeText)
+        startTimeText.text = "Start Time*"
+       
+        mainView.addSubview(startDate)
+        startDate.backgroundColor = .clear
+        startDate.layer.borderWidth = 1
+        startDate.rightViewMode = .always
+        startDate.rightView = UIImageView(image: UIImage(named: "mag"))
+        NSLayoutConstraint.activate([
+            
+            startTimeText.topAnchor.constraint(equalTo: noteInput.bottomAnchor, constant: 20),
+            startTimeText.leadingAnchor.constraint(equalTo: startDate.leadingAnchor),
+            startTimeText.widthAnchor.constraint(equalToConstant: 100),
+            startTimeText.heightAnchor.constraint(equalToConstant: 20),
+
+            
+            startDate.topAnchor.constraint(equalTo: startTimeText.bottomAnchor, constant: 20),
+            
+            startDate.leadingAnchor.constraint(equalTo: image.leadingAnchor),
+            startDate.widthAnchor.constraint(equalToConstant: 150),
+            startDate.heightAnchor.constraint(equalToConstant: 60),
+           
+            
+        ])
+        
+    }
+   
+    //MARK: - End Date
+    
+    let endDate = EATextField(placeholder: "--:--", isSecureTextEntry: false, textAlignment: .center)
+
+    let endTimeText = EATitle(textAlignment: .left, fontSize: 16)
+
+    private func configureEndDate(){
+        endDate.delegate = self
+        endTimeText.text = "End Time*"
+        mainView.addSubview(endDate)
+        mainView.addSubview(endTimeText)
+        endDate.backgroundColor = .clear
+        endDate.layer.borderWidth = 1
+        endDate.rightViewMode = .always
+
+        endDate.rightView = UIImageView(image: UIImage(named: "mag"))
+        NSLayoutConstraint.activate([
+            
+            endTimeText.topAnchor.constraint(equalTo: noteInput.bottomAnchor, constant: 20),
+            endTimeText.leadingAnchor.constraint(equalTo: endDate.leadingAnchor),
+            endTimeText.widthAnchor.constraint(equalToConstant: 100),
+            endTimeText.heightAnchor.constraint(equalToConstant: 20),
+
+            
+            
+            endDate.topAnchor.constraint(equalTo: endTimeText.bottomAnchor, constant: 20),
+            
+            endDate.widthAnchor.constraint(equalToConstant: 150),
+            endDate.trailingAnchor.constraint(equalTo: noteInput.trailingAnchor),
+            endDate.heightAnchor.constraint(equalToConstant: 60),
+           
+            
+        ])
+        
+        
+        
+    }
+   
+    //MARK: - DatePickerInputView
+    
+    var selectedField : UITextField?
+    
+    let datePicker = UIDatePicker()
+    let toolbar = UIToolbar()
+    
+    func textFieldDidBeginEditing(_ textField: UITextField) {
+        
+        selectedField = textField
+      
+
+       
+        toolbar.sizeToFit()
+        let doneButton = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(doneClicked))
+        
+        toolbar.setItems([doneButton], animated: true)
+        
+        textField.inputAccessoryView = toolbar
+        textField.inputView = datePicker
+        
+        datePicker.preferredDatePickerStyle = .wheels
+        datePicker.datePickerMode = .date
+        
+    }
+    
+    @objc func doneClicked(){
+        
+        guard let selectedField = selectedField else { return }
+        selectedField.text = datePicker.date.formatted(date: .long , time: .omitted)
+        self.view.endEditing(true)
+        
+    }
    
     
-   
+   //MARK: - RightBarButtons
     
     @objc func editClicked(){
         let editVC = UINavigationController(rootViewController: EditVC())
@@ -159,7 +582,7 @@ class AddItemVC: UIViewController,UIPickerViewDelegate,UIPickerViewDataSource{
             return
         }
         
-        guard noteInput.text != "Your Note Here" else {
+        guard noteInput.text != "" else {
             makeEAAlert(alertTitle: "Error", alertLabel: "You must write a Note 📝")
             return
         }
@@ -167,7 +590,11 @@ class AddItemVC: UIViewController,UIPickerViewDelegate,UIPickerViewDataSource{
         let firestore = Firestore.firestore()
         
         do{
-            try firestore.collection("Users").document((Auth.auth().currentUser?.email)!).collection("Notes").addDocument(from: Notes(Title: titleInput.text!, Color: EditVC.selectedColor , Descr: noteInput.text!, Lock:EditVC.lock, Categ: self.selectedCateg!))
+            try firestore.collection("Users")
+                .document((Auth.auth()
+                .currentUser?.email)!)
+                .collection("Notes")
+                .addDocument(from: Notes(Title: titleInput.text!, Color: EditVC.selectedColor , Descr: noteInput.text!, Lock:EditVC.lock, Categ: self.selectedCateg ?? self.noteCategories[0], StartDate: startDate.text?.turnToDate() ?? Date(), EndDate : endDate.text?.turnToDate() ?? Date(), tasks : toDoList))
             
             
             

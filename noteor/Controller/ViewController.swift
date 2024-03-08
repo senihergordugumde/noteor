@@ -11,7 +11,7 @@ class ViewController: UIViewController {
     
     let username = EATextField(placeholder: "Username", isSecureTextEntry: false, textAlignment: .center)
     let password = EATextField(placeholder: "Password", isSecureTextEntry: true, textAlignment: .center)
-    let signIn = EAButton(title: "SignIn", backgroundColor: .systemGray4,cornerRadius: 10)
+    let signIn = EAButton(title: "SignIn", backgroundColor: UIColor(named: "Yellow") ?? .systemYellow,cornerRadius: 35)
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -19,18 +19,19 @@ class ViewController: UIViewController {
         configureUsername()
         configurePassword()
         configureSignIn()
+        configureBackground()
     }
 
     
     
-   
+    
     
     private func configureUsername(){
         
         view.addSubview(username)
         NSLayoutConstraint.activate([
         
-            username.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 300),
+            username.topAnchor.constraint(equalTo: view.topAnchor, constant: 300),
             
             username.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             username.widthAnchor.constraint(equalToConstant: 300),
@@ -67,9 +68,10 @@ class ViewController: UIViewController {
         NSLayoutConstraint.activate([
         
             signIn.topAnchor.constraint(equalTo: password.bottomAnchor, constant: 50),
-            signIn.trailingAnchor.constraint(equalTo: password.trailingAnchor),
-            signIn.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 200),
-            signIn.heightAnchor.constraint(equalToConstant: 30)
+            signIn.leadingAnchor.constraint(equalTo: password.leadingAnchor),
+            
+            signIn.widthAnchor.constraint(equalToConstant: 130),
+            signIn.heightAnchor.constraint(equalToConstant: 80)
             
         
         

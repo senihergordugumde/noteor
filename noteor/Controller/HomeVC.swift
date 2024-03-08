@@ -2,185 +2,342 @@
 //  HomeVC.swift
 //  noteor
 //
-//  Created by Emir AKSU on 17.02.2024.
+//  Created by Emir AKSU on 4.03.2024.
 //
 
 import UIKit
 import FirebaseFirestore
 import FirebaseAuth
-class HomeVC: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource, UISearchResultsUpdating {
-    
-    var searchController : UISearchController!
 
-    @Published var notes = [Notes]()
+class HomeVC: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource, UITableViewDelegate, UITableViewDataSource {
     
-
-    // MARK: - Filter
-    var filteredNotes = [Notes]()
-    func updateSearchResults(for searchController: UISearchController) {
-        
-        let searchBar = searchController.searchBar
-        let scopeButton = searchBar.scopeButtonTitles![searchBar.selectedScopeButtonIndex]
-      
-        
-        guard let filter = searchController.searchBar.text, !filter.isEmpty else {
-            
-            
-            guard scopeButton == "All" else {
-                filteredNotes = notes.filter{$0.Categ.lowercased().contains(scopeButton.lowercased()) } // Sadece kategoriye göre filtreler
-                DispatchQueue.main.async {
-                    self.collectionView.reloadData()
-                }
-                return
-            }
-            
-         
-            filteredNotes = notes // All seçili, Filtre yok
-     
-            DispatchQueue.main.async {
-                self.collectionView.reloadData()
-            }
-            return
-        }
-        
-        if scopeButton == "All"{
-            filteredNotes = notes.filter{  $0.Title.lowercased().contains(filter.lowercased()) }  // All seçiliyken yazıya göre filtreler
-            
-        }else{
-          
-            filteredNotes = notes.filter{  $0.Title.lowercased().contains(filter.lowercased()) && $0.Categ.lowercased().contains(scopeButton.lowercased()) } // Hem katgoriye hem yazıya göre filtreler
-          
-         
-        }
-        
-        
-        DispatchQueue.main.async {
-            self.collectionView.reloadData()
-        }
-        
-    }
-    
-    
-    //MARK: - Collection View
-    var collectionView : UICollectionView!
-    
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        
-      
-        return filteredNotes.count
-       
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: TaskCell.id, for: indexPath) as! TaskCell
-        
-   
-        cell.set(note: filteredNotes[indexPath.row])
-        
-        return cell
-       
   
-    }
     
-    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let destinationVC = AddItemVC()
-        destinationVC.note = filteredNotes[indexPath.item]
-        
-        guard filteredNotes[indexPath.item].Lock == false else{
-            
-            makeEAAlertTextField(alertTitle: "Locked"){
-                self.navigationController?.pushViewController(destinationVC, animated: true)
-            }
-          
-            
-          
-
-            return
-        }
-        
-       
-        self.navigationController?.pushViewController(destinationVC, animated: true)
-       
-    }
-    
-    
-    //MARK: - Life Cycle
    
+    
+   
+    
+    var categories = ["Work", "Food", "Gym"]
+    var notes : [Notes]?
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        
-        
-        
-  
-        configureCollectionView()
-        
+
+        configureTopView()
+        configurecolTableBack()
+        view.backgroundColor = UIColor(named: "Red")
         getDocuments()
         
-        configureSearchBar()
-
-        self.navigationController?.navigationBar.prefersLargeTitles = true
-        self.navigationItem.title = "Noteor"
-        
-        self.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addButtonClicked))
         
     }
     
+    
+    override func viewWillAppear(_ animated: Bool) {
+        self.navigationController?.isNavigationBarHidden = true
+
+    }
+    
+    //MARK: -  ColTableBack
+    
+    
+    private let colTableBack : UIView = {
+       let view = UIView()
+        
+        view.backgroundColor = .white
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.layer.cornerRadius = 20
+
+       
+        return view
+    }()
+    
+    
+    let categoriesText = EATitle(textAlignment: .left, fontSize: 16)
+    let calendarButton = EAButton(title: "", backgroundColor: .white, cornerRadius: 0)
+    
+    private func configurecolTableBack(){
+        
+     
+     
+        categoriesText.text = "Categories"
   
-    //MARK: - UI Configures
+        view.addSubview(colTableBack)
+        colTableBack.addSubview(categoriesText)
+        colTableBack.addSubview(calendarButton)
+        
+        NSLayoutConstraint.activate([
+        
+            colTableBack.topAnchor.constraint(equalTo: topView.bottomAnchor),
+            colTableBack.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            colTableBack.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            colTableBack.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+        
+        ])
+        
+        //MARK: -  Categories Text
 
-    @objc func addButtonClicked(){
+        NSLayoutConstraint.activate([
         
-        self.navigationController?.pushViewController(AddItemVC(), animated: true)
+            categoriesText.topAnchor.constraint(equalTo: topView.bottomAnchor, constant: 20),
+            categoriesText.leadingAnchor.constraint(equalTo: colTableBack.leadingAnchor, constant: 20),
+            categoriesText.widthAnchor.constraint(equalToConstant: 100),
+            categoriesText.heightAnchor.constraint(equalToConstant: 24)
+        
+        ])
+
+        //MARK: -  Calendar
+
+        NSLayoutConstraint.activate([
+        
+            calendarButton.centerYAnchor.constraint(equalTo: categoriesText.centerYAnchor),
+            calendarButton.trailingAnchor.constraint(equalTo: colTableBack.trailingAnchor, constant: -20),
+            calendarButton.widthAnchor.constraint(equalToConstant: 40),
+            calendarButton.heightAnchor.constraint(equalToConstant: 44)
+        
+        ])
+        calendarButton.setImage(UIImage(named: "calendar"), for: .normal)
+        
+      
+        calendarButton.addTarget(self, action: #selector(calendarButtonClicked), for: .touchUpInside)
+        
+        
+        
+        configureCollectionView()
+        todaysTask()
+        configureTableView()
+        
+    }
+    
+    @objc func calendarButtonClicked(){
+        let destinationVC = CalendarVC()
+        destinationVC.notes = self.notes
+        
+        self.navigationController?.pushViewController(destinationVC, animated: true)
     }
     
     
-    private func configureSearchBar(){
-        
-        
-        searchController = UISearchController()
-        searchController.searchResultsUpdater = self
-        searchController.searchBar.placeholder = "Search in notes"
-        searchController.obscuresBackgroundDuringPresentation = false
-        navigationItem.searchController = searchController
-        searchController.searchBar.scopeButtonTitles = ["All","School","Work","Food","Sport","Special Days"]
-        searchController.searchBar.showsScopeBar = true
-        
-    }
+    
+    //MARK: -  Collection View
+    var collectionView : UICollectionView?
+
+   
 
     private func configureCollectionView(){
         
-        collectionView = UICollectionView(frame: view.bounds, collectionViewLayout: createFlowLayout())
-        collectionView.backgroundColor = .systemBackground
-        collectionView.register(TaskCell.self, forCellWithReuseIdentifier: TaskCell.id)
+        collectionView = UICollectionView(frame: .null, collectionViewLayout: createLayout())
         
-        collectionView.dataSource = self
+        
+        guard let collectionView = collectionView else {
+            print("error")
+            return}
+            
+        colTableBack.addSubview(collectionView)
+        
+        
+        collectionView.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            collectionView.topAnchor.constraint(equalTo: categoriesText.bottomAnchor, constant: 20),
+            collectionView.leadingAnchor.constraint(equalTo: colTableBack.leadingAnchor, constant: 20),
+            collectionView.trailingAnchor.constraint(equalTo: colTableBack.trailingAnchor, constant: -20),
+            collectionView.heightAnchor.constraint(equalToConstant: 120)
+        
+
+        ])
+        
         collectionView.delegate = self
+        collectionView.dataSource = self
+        
+        collectionView.register(CategCell.self, forCellWithReuseIdentifier: CategCell.id)
+        
+    }
+    
+    private func createLayout() -> UICollectionViewFlowLayout {
+        let layout = UICollectionViewFlowLayout()
+        let padding : Double = 14
+        layout.itemSize = .init(width: 90, height: 110)
+        layout.sectionInset = .init(top: padding, left: padding, bottom: padding, right: padding)
+        
+        layout.scrollDirection = .horizontal
+        return layout
         
         
-        view.addSubview(collectionView)
+    }
+    
+    //MARK: - CollectionView Delegates
+    
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return categories.count
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CategCell.id, for: indexPath) as! CategCell
+        
+        cell.set(categ: categories[indexPath.row])
+        
+        return cell
+    }
+    
+    //MARK: - Today's Task Text
+    
+    let todaysTaskText = EATitle(textAlignment: .left, fontSize: 16)
+    private func todaysTask(){
+        todaysTaskText.text = "Today's Task"
+        colTableBack.addSubview(todaysTaskText)
+        
+        NSLayoutConstraint.activate([
+        
+            todaysTaskText.leadingAnchor.constraint(equalTo: colTableBack.leadingAnchor, constant: 20),
+            todaysTaskText.topAnchor.constraint(equalTo: collectionView!.bottomAnchor, constant: 20),
+            todaysTaskText.widthAnchor.constraint(equalToConstant: 200),
+            todaysTaskText.heightAnchor.constraint(equalToConstant: 20)
+        ])
+    }
+    
+    
+    //MARK: - Table View
+
+    
+    var tableView : UITableView?
+    private func configureTableView(){
+        
+      
+        
+        view.addSubview(colTableBack)
+        
+        
+        
+        tableView = UITableView()
+        guard let tableView = tableView else {return}
+        colTableBack.addSubview(tableView)
+        tableView.delegate = self
+        tableView.dataSource = self
+        tableView.translatesAutoresizingMaskIntoConstraints = false
+        tableView.register(TaskCountCell.self, forCellReuseIdentifier: TaskCountCell.id)
+        
+        NSLayoutConstraint.activate([
+        
+            tableView.topAnchor.constraint(equalTo: todaysTaskText.bottomAnchor, constant: 20),
+            tableView.leadingAnchor.constraint(equalTo: colTableBack.leadingAnchor),
+            tableView.trailingAnchor.constraint(equalTo: colTableBack.trailingAnchor),
+            tableView.bottomAnchor.constraint(equalTo: colTableBack.bottomAnchor)
+
+        
+        ])
+        
+       
+    
+        
+    }
+    
+    //MARK: -  TableView Delegates
+
+    
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return categories.count
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        
+       
+        
+        let cell = tableView.dequeueReusableCell(withIdentifier: TaskCountCell.id, for: indexPath) as! TaskCountCell
+        
+        
+        
+        var count = 0
+        if let notes = self.notes {
+            
+            for j in notes{
+                if (categories[indexPath.row] == j.Categ){
+                    count += 1
+                }
+            }
+            
+            
+        }
+      
+        cell.set(categ: categories[indexPath.row], count: count)
+        
+        
+        return cell
+        
+    }
+    
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 75
+    }
+    
+    
+    //MARK: -  TopView
+    
+    private let topView : UIView = {
+       let view = UIView()
+        
+        view.backgroundColor = UIColor(named: "Red")
+        view.translatesAutoresizingMaskIntoConstraints = false
+    
+       
+        return view
+    }()
+    
+    private func configureTopView(){
+        
+  
+        view.addSubview(topView)
+        NSLayoutConstraint.activate([
+        
+            topView.topAnchor.constraint(equalTo: view.topAnchor),
+            topView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            topView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            topView.heightAnchor.constraint(equalToConstant: 250)
+        
+        ])
+
+        
+      
+        configureTopBar()
 
         
     }
-    
-    
-    func createFlowLayout() -> UICollectionViewFlowLayout{
+
+    private func configureTopBar(){
+        //MARK: -  TopBar
+
+        let logo = UIImageView(image: UIImage(named: "logo"))
+        let task = UIImageView(image: UIImage(named: "task"))
+      
+        logo.translatesAutoresizingMaskIntoConstraints = false
+        task.translatesAutoresizingMaskIntoConstraints = false
         
-        let layout = UICollectionViewFlowLayout()
+        topView.addSubview(task)
+        topView.addSubview(logo)
+
+        NSLayoutConstraint.activate([
         
-        let width = view.bounds.width
-        let padding : CGFloat = 8
-        let minimumItemSpace : CGFloat = 12
-        let newWidth =  width - (padding * 2) - (minimumItemSpace * 2)
-        let itemWidth = newWidth / 2
-        layout.itemSize = .init(width: itemWidth, height: itemWidth)
-        layout.sectionInset = .init(top: padding, left: padding, bottom: padding, right: padding)
+            logo.centerYAnchor.constraint(equalTo: task.centerYAnchor),
+            logo.leadingAnchor.constraint(equalTo: topView.leadingAnchor, constant: 10),
+            logo.heightAnchor.constraint(equalToConstant: 50),
+            logo.widthAnchor.constraint(equalToConstant: 50),
+            
+            
+            
+            task.trailingAnchor.constraint(equalTo: topView.trailingAnchor, constant: -10),
+            task.topAnchor.constraint(equalTo: topView.safeAreaLayoutGuide.topAnchor, constant: 10),
+            task.heightAnchor.constraint(equalToConstant: 70),
+            task.widthAnchor.constraint(equalToConstant: 65),
+            
+     
+
+
+        ])
         
-        return layout
+        
         
     }
     
+    
+    //MARK: - Get Data
+
     
     func getDocuments(){
         
@@ -214,15 +371,17 @@ class HomeVC: UIViewController, UICollectionViewDelegate, UICollectionViewDataSo
                 
             }
             
-            self.filteredNotes = self.notes
-            
             DispatchQueue.main.async {
-                self.collectionView.reloadData()
+                
+                self.tableView?.reloadData()
+                
             }
             
+            
+            
         }
-        
-        
+      
         
     }
+
 }

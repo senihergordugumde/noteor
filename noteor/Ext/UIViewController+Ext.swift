@@ -10,6 +10,65 @@ import UIKit
 
 extension UIViewController{
     
+    func configureBackground(){
+        
+        var yellowTopImage : UIImageView={
+            let imageView = UIImageView(image: UIImage(named: "back-blur"))
+            imageView.translatesAutoresizingMaskIntoConstraints = false
+            
+            return imageView
+        }()
+        
+        view.insertSubview(yellowTopImage, at: 0)
+        NSLayoutConstraint.activate([
+            
+            yellowTopImage.topAnchor.constraint(equalTo: view.topAnchor),
+            yellowTopImage.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            yellowTopImage.widthAnchor.constraint(equalToConstant: 250),
+            yellowTopImage.heightAnchor.constraint(equalToConstant: 200)
+            
+        ])
+        
+        
+        var redTopImage : UIImageView={
+            let imageView = UIImageView(image: UIImage(named: "red-blur"))
+            imageView.translatesAutoresizingMaskIntoConstraints = false
+            
+            return imageView
+        }()
+        
+        view.insertSubview(redTopImage, at: 0)
+        NSLayoutConstraint.activate([
+            
+            redTopImage.topAnchor.constraint(equalTo: view.topAnchor),
+            redTopImage.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            redTopImage.widthAnchor.constraint(equalToConstant: 250),
+            redTopImage.heightAnchor.constraint(equalToConstant: 200)
+            
+        ])
+        
+        
+        
+        var redBottomImage : UIImageView={
+            let imageView = UIImageView(image: UIImage(named: "redBottom"))
+            imageView.translatesAutoresizingMaskIntoConstraints = false
+            
+            return imageView
+        }()
+        
+        view.insertSubview(redBottomImage, at: 0)
+        NSLayoutConstraint.activate([
+            
+            redBottomImage.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            redBottomImage.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            redBottomImage.widthAnchor.constraint(equalToConstant: 250),
+            redBottomImage.heightAnchor.constraint(equalToConstant: 120)
+            
+        ])
+        
+        
+    }
+    
     func makeEAAlert(alertTitle : String, alertLabel : String){
         DispatchQueue.main.async {
             let alert = AlertVC(alertTitle: alertTitle, alertLabel: alertLabel)
@@ -23,6 +82,8 @@ extension UIViewController{
 
         
     }
+         
+         
     
     
     func makeEAAlertTextField(alertTitle : String, completion : @escaping () -> ()) {
@@ -45,6 +106,8 @@ extension UIViewController{
         
         
     }
+    
+  
    
     
     
