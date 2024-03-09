@@ -28,11 +28,12 @@ class TaskCell: UICollectionViewCell {
         super.init(frame: .zero)
         configure()
         
+        
     }
     
     private func configure(){
         //MARK: - Cell BG
-     
+        configureBackground()
         
         
         backgroundColor = .white
@@ -53,8 +54,8 @@ class TaskCell: UICollectionViewCell {
         
         
         //MARK: - Ropes
-        insertSubview(rope, at: 0)
-        insertSubview(rope2, at: 0)
+        insertSubview(rope, at: 1)
+        insertSubview(rope2, at: 1)
         rope.translatesAutoresizingMaskIntoConstraints = false
         rope2.translatesAutoresizingMaskIntoConstraints = false
         
@@ -171,6 +172,40 @@ class TaskCell: UICollectionViewCell {
         
     }
     
+    
+    //MARK: - Background
+    
+    let redBlur = UIImageView(image: UIImage(named: "red-blur"))
+    let yellowBlur = UIImageView(image: UIImage(named: "back-blur"))
+
+    private func configureBackground(){
+        insertSubview(redBlur, at: 0)
+        redBlur.translatesAutoresizingMaskIntoConstraints = false
+        
+        
+        NSLayoutConstraint.activate([
+            
+            redBlur.trailingAnchor.constraint(equalTo: trailingAnchor),
+            redBlur.topAnchor.constraint(equalTo: topAnchor, constant:  0),
+            redBlur.heightAnchor.constraint(equalToConstant: 200),
+            redBlur.widthAnchor.constraint(equalToConstant: 100)
+            
+        ])
+        
+        insertSubview(yellowBlur, at: 0)
+        yellowBlur.translatesAutoresizingMaskIntoConstraints = false
+        
+        
+        NSLayoutConstraint.activate([
+            
+            yellowBlur.leadingAnchor.constraint(equalTo: leadingAnchor),
+            yellowBlur.topAnchor.constraint(equalTo: topAnchor, constant:  0),
+            yellowBlur.heightAnchor.constraint(equalToConstant: 100),
+            yellowBlur.widthAnchor.constraint(equalToConstant: 100)
+            
+        ])
+        
+    }
     
     func set (note : Notes){
         

@@ -10,7 +10,7 @@ import UIKit
 
 extension UIViewController{
     
-    func configureBackground(){
+    func configureBackground(view : UIView){
         
         var yellowTopImage : UIImageView={
             let imageView = UIImageView(image: UIImage(named: "back-blur"))

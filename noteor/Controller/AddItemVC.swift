@@ -43,7 +43,7 @@ class AddItemVC: UIViewController,UIPickerViewDelegate,UIPickerViewDataSource, U
         let trashButton =  UIBarButtonItem(image: UIImage(systemName: "trash"), style: .done, target: self, action: #selector(trashClicked))
         let topRightButtons = [saveButton,editButton,trashButton]
 
-        self.navigationController?.navigationBar.prefersLargeTitles = true
+        self.navigationController?.navigationBar.prefersLargeTitles = false
         self.navigationItem.title = "Add Note"
         
         view.backgroundColor = .systemBackground
@@ -53,8 +53,9 @@ class AddItemVC: UIViewController,UIPickerViewDelegate,UIPickerViewDataSource, U
         self.navigationItem.rightBarButtonItems = topRightButtons
         self.navigationController?.isNavigationBarHidden = false
        
-
+        self.navigationController?.navigationBar.backgroundColor = .clear
         self.navigationItem.leftBarButtonItem = UIBarButtonItem(image: UIImage(named: "arrow-left")!.resized(toWidth: 40), style: .done, target: self, action: #selector(backButton))
+        configureBackground(view: mainView)
         configureTitleInput()
         configureTodoAdd()
         configureNoteInput()
@@ -62,7 +63,8 @@ class AddItemVC: UIViewController,UIPickerViewDelegate,UIPickerViewDataSource, U
         configureScrollView()
         configureStartDate()
         configureEndDate()
-
+        configureStartTime()
+        configureEndTime()
     }
     
     @objc func backButton(){
@@ -453,13 +455,13 @@ class AddItemVC: UIViewController,UIPickerViewDelegate,UIPickerViewDataSource, U
     
     //MARK: - Start Date
     
-    let startDate = EATextField(placeholder: "--:--", isSecureTextEntry: false, textAlignment: .center)
-    let startTimeText = EATitle(textAlignment: .left, fontSize: 16)
+    let startDate = EATextField(placeholder: "--/--", isSecureTextEntry: false, textAlignment: .center)
+    let startDateText = EATitle(textAlignment: .left, fontSize: 16)
     
     private func configureStartDate(){
         startDate.delegate = self
-        mainView.addSubview(startTimeText)
-        startTimeText.text = "Start Time*"
+        mainView.addSubview(startDateText)
+        startDateText.text = "Start Date*"
        
         mainView.addSubview(startDate)
         startDate.backgroundColor = .clear
@@ -468,13 +470,13 @@ class AddItemVC: UIViewController,UIPickerViewDelegate,UIPickerViewDataSource, U
         startDate.rightView = UIImageView(image: UIImage(named: "mag"))
         NSLayoutConstraint.activate([
             
-            startTimeText.topAnchor.constraint(equalTo: noteInput.bottomAnchor, constant: 20),
-            startTimeText.leadingAnchor.constraint(equalTo: startDate.leadingAnchor),
-            startTimeText.widthAnchor.constraint(equalToConstant: 100),
-            startTimeText.heightAnchor.constraint(equalToConstant: 20),
+            startDateText.topAnchor.constraint(equalTo: noteInput.bottomAnchor, constant: 20),
+            startDateText.leadingAnchor.constraint(equalTo: startDate.leadingAnchor),
+            startDateText.widthAnchor.constraint(equalToConstant: 100),
+            startDateText.heightAnchor.constraint(equalToConstant: 20),
 
             
-            startDate.topAnchor.constraint(equalTo: startTimeText.bottomAnchor, constant: 20),
+            startDate.topAnchor.constraint(equalTo: startDateText.bottomAnchor, constant: 20),
             
             startDate.leadingAnchor.constraint(equalTo: image.leadingAnchor),
             startDate.widthAnchor.constraint(equalToConstant: 150),
@@ -484,18 +486,51 @@ class AddItemVC: UIViewController,UIPickerViewDelegate,UIPickerViewDataSource, U
         ])
         
     }
+    //MARK: - Start Time
+    
+    let startTime = EATextField(placeholder: "--:--", isSecureTextEntry: false, textAlignment: .center)
+    let startTimeText = EATitle(textAlignment: .left, fontSize: 16)
+    
+    private func configureStartTime(){
+        startTime.delegate = self
+        mainView.addSubview(startTimeText)
+        startTimeText.text = "Start Time*"
+       
+        mainView.addSubview(startTime)
+        startTime.backgroundColor = .clear
+        startTime.layer.borderWidth = 1
+        startTime.rightViewMode = .always
+        startTime.rightView = UIImageView(image: UIImage(named: "mag"))
+        NSLayoutConstraint.activate([
+            
+            startTimeText.topAnchor.constraint(equalTo: startDate.bottomAnchor, constant: 20),
+            startTimeText.leadingAnchor.constraint(equalTo: startDate.leadingAnchor),
+            startTimeText.widthAnchor.constraint(equalToConstant: 100),
+            startTimeText.heightAnchor.constraint(equalToConstant: 20),
+
+            
+            startTime.topAnchor.constraint(equalTo: startTimeText.bottomAnchor, constant: 20),
+            
+            startTime.leadingAnchor.constraint(equalTo: startTimeText.leadingAnchor),
+            startTime.widthAnchor.constraint(equalToConstant: 150),
+            startTime.heightAnchor.constraint(equalToConstant: 60),
+           
+            
+        ])
+        
+    }
    
     //MARK: - End Date
     
-    let endDate = EATextField(placeholder: "--:--", isSecureTextEntry: false, textAlignment: .center)
+    let endDate = EATextField(placeholder: "--/--", isSecureTextEntry: false, textAlignment: .center)
 
-    let endTimeText = EATitle(textAlignment: .left, fontSize: 16)
+    let endDateText = EATitle(textAlignment: .left, fontSize: 16)
 
     private func configureEndDate(){
         endDate.delegate = self
-        endTimeText.text = "End Time*"
+        endTimeText.text = "End Date*"
         mainView.addSubview(endDate)
-        mainView.addSubview(endTimeText)
+        mainView.addSubview(endDateText)
         endDate.backgroundColor = .clear
         endDate.layer.borderWidth = 1
         endDate.rightViewMode = .always
@@ -503,14 +538,14 @@ class AddItemVC: UIViewController,UIPickerViewDelegate,UIPickerViewDataSource, U
         endDate.rightView = UIImageView(image: UIImage(named: "mag"))
         NSLayoutConstraint.activate([
             
-            endTimeText.topAnchor.constraint(equalTo: noteInput.bottomAnchor, constant: 20),
-            endTimeText.leadingAnchor.constraint(equalTo: endDate.leadingAnchor),
-            endTimeText.widthAnchor.constraint(equalToConstant: 100),
-            endTimeText.heightAnchor.constraint(equalToConstant: 20),
+            endDateText.topAnchor.constraint(equalTo: noteInput.bottomAnchor, constant: 20),
+            endDateText.leadingAnchor.constraint(equalTo: endDate.leadingAnchor),
+            endDateText.widthAnchor.constraint(equalToConstant: 100),
+            endDateText.heightAnchor.constraint(equalToConstant: 20),
 
             
             
-            endDate.topAnchor.constraint(equalTo: endTimeText.bottomAnchor, constant: 20),
+            endDate.topAnchor.constraint(equalTo: endDateText.bottomAnchor, constant: 20),
             
             endDate.widthAnchor.constraint(equalToConstant: 150),
             endDate.trailingAnchor.constraint(equalTo: noteInput.trailingAnchor),
@@ -520,6 +555,40 @@ class AddItemVC: UIViewController,UIPickerViewDelegate,UIPickerViewDataSource, U
         ])
         
         
+        
+    }
+    
+    //MARK: - End Time
+
+    let endTime = EATextField(placeholder: "--:--", isSecureTextEntry: false, textAlignment: .center)
+    let endTimeText = EATitle(textAlignment: .left, fontSize: 16)
+    
+    private func configureEndTime(){
+        endTime.delegate = self
+        mainView.addSubview(endTimeText)
+        endTimeText.text = "End Time*"
+       
+        mainView.addSubview(endTime)
+        endTime.backgroundColor = .clear
+        endTime.layer.borderWidth = 1
+        endTime.rightViewMode = .always
+        endTime.rightView = UIImageView(image: UIImage(named: "mag"))
+        NSLayoutConstraint.activate([
+            
+            endTimeText.topAnchor.constraint(equalTo: endDate.bottomAnchor, constant: 20),
+            endTimeText.leadingAnchor.constraint(equalTo: endDate.leadingAnchor),
+            endTimeText.widthAnchor.constraint(equalToConstant: 100),
+            endTimeText.heightAnchor.constraint(equalToConstant: 20),
+
+            
+            endTime.topAnchor.constraint(equalTo: endTimeText.bottomAnchor, constant: 20),
+            
+            endTime.leadingAnchor.constraint(equalTo: endTimeText.leadingAnchor),
+            endTime.widthAnchor.constraint(equalToConstant: 150),
+            endTime.heightAnchor.constraint(equalToConstant: 60),
+           
+            
+        ])
         
     }
    
@@ -539,20 +608,42 @@ class AddItemVC: UIViewController,UIPickerViewDelegate,UIPickerViewDataSource, U
         toolbar.sizeToFit()
         let doneButton = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(doneClicked))
         
-        toolbar.setItems([doneButton], animated: true)
+        let cancelButton = UIBarButtonItem(barButtonSystemItem: .cancel, target: self, action: #selector(cancelClicked))
+        
+        toolbar.setItems([doneButton, cancelButton], animated: true)
         
         textField.inputAccessoryView = toolbar
         textField.inputView = datePicker
-        
         datePicker.preferredDatePickerStyle = .wheels
-        datePicker.datePickerMode = .date
+        
+        if selectedField?.placeholder == "--/--" {
+            datePicker.datePickerMode = .date
+
+        }else{
+            datePicker.datePickerMode = .time
+
+        }
         
     }
     
     @objc func doneClicked(){
         
         guard let selectedField = selectedField else { return }
-        selectedField.text = datePicker.date.formatted(date: .long , time: .omitted)
+        if selectedField.placeholder == "--/--" {
+
+            selectedField.text = datePicker.date.formatted(date: .long , time: .omitted)
+
+
+        }else{
+            selectedField.text = datePicker.date.formatted(date: .omitted, time: .shortened)
+
+        }
+        self.view.endEditing(true)
+        
+    }
+    
+    @objc func cancelClicked(){
+    
         self.view.endEditing(true)
         
     }

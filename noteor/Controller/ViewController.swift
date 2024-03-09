@@ -19,7 +19,7 @@ class ViewController: UIViewController {
         configureUsername()
         configurePassword()
         configureSignIn()
-        configureBackground()
+        configureBackground(view: view)
     }
 
     

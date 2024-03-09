@@ -12,7 +12,7 @@ class AlertVC: UIViewController {
     let alertContainer = UIView()
     let alertTitle = EATitle(textAlignment: .center, fontSize: 16)
     let alertLabel = EALabel(textAlignment: .center, fontSize: 12)
-    let alertButton = EAButton(title: "OK", backgroundColor: .systemGreen, cornerRadius: 15)
+    let alertButton = EAButton(title: "OK", backgroundColor: UIColor(named: "Red")!, cornerRadius: 15)
     
     
     override func viewDidLoad() {
