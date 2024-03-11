@@ -185,7 +185,7 @@ class TaskCell: UICollectionViewCell {
         
         NSLayoutConstraint.activate([
             
-            redBlur.trailingAnchor.constraint(equalTo: trailingAnchor),
+            redBlur.trailingAnchor.constraint(equalTo: trailingAnchor, constant: 20),
             redBlur.topAnchor.constraint(equalTo: topAnchor, constant:  0),
             redBlur.heightAnchor.constraint(equalToConstant: 200),
             redBlur.widthAnchor.constraint(equalToConstant: 100)
@@ -198,7 +198,7 @@ class TaskCell: UICollectionViewCell {
         
         NSLayoutConstraint.activate([
             
-            yellowBlur.leadingAnchor.constraint(equalTo: leadingAnchor),
+            yellowBlur.leadingAnchor.constraint(equalTo: leadingAnchor, constant: -20),
             yellowBlur.topAnchor.constraint(equalTo: topAnchor, constant:  0),
             yellowBlur.heightAnchor.constraint(equalToConstant: 100),
             yellowBlur.widthAnchor.constraint(equalToConstant: 100)

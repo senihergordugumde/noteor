@@ -19,6 +19,8 @@ struct Notes : Identifiable, Codable{
     var Categ : String
     var StartDate : Date
     var EndDate : Date
+    var StartTime : Date
+    var EndTime : Date
 
     var tasks : [tasks]
    

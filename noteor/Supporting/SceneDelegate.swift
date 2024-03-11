@@ -17,7 +17,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         
         window = UIWindow(frame: windowScene.coordinateSpace.bounds)
         window?.windowScene = windowScene
-        window?.rootViewController = createTabbar()
+        window?.rootViewController = createMainNC()
         window?.makeKeyAndVisible()
         
         
@@ -31,7 +31,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     func createHomeNC() -> UINavigationController{
         let homeVC = HomeVC()
         
-        homeVC.tabBarItem = UITabBarItem(tabBarSystemItem: .recents, tag: 0)
+        homeVC.tabBarItem = UITabBarItem(title: "Home", image: UIImage(systemName: "house.fill"), tag: 0)
         return UINavigationController(rootViewController: homeVC)
         
     }
@@ -48,7 +48,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     func createNotesNC() -> UINavigationController{
         let NotesVC = NotesVC()
         
-        NotesVC.tabBarItem = UITabBarItem(tabBarSystemItem: .bookmarks, tag: 1)
+        NotesVC.tabBarItem = UITabBarItem(title: "Tasks", image: UIImage(systemName: "book.pages.fill"), tag: 1)
         return UINavigationController(rootViewController: NotesVC)
         
     }

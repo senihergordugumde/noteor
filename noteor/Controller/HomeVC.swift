@@ -247,8 +247,12 @@ class HomeVC: UIViewController, UICollectionViewDelegate, UICollectionViewDataSo
         var count = 0
         if let notes = self.notes {
             
+            
             for j in notes{
-                if (categories[indexPath.row] == j.Categ){
+                
+                
+                
+                if (categories[indexPath.row] == j.Categ) && (j.StartDate < Date() && j.EndDate > Date())      {
                     count += 1
                 }
             }
@@ -341,9 +345,16 @@ class HomeVC: UIViewController, UICollectionViewDelegate, UICollectionViewDataSo
     
     func getDocuments(){
         
+        
         let firestore = Firestore.firestore()
         
-        firestore.collection("Users").document(Auth.auth().currentUser?.email ?? "").collection("Notes").addSnapshotListener { snap, error in
+        guard let userEmail = Auth.auth().currentUser?.email else {
+            
+            self.makeEAAlert(alertTitle: "Login Error", alertLabel: "You should SignIn First")
+            return}
+
+        
+        firestore.collection("Users").document(userEmail).collection("Notes").addSnapshotListener { snap, error in
             
             
             guard let documents = snap?.documents else {

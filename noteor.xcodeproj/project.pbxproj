@@ -64,6 +64,7 @@
 		1D9D7D962B832B14006A1DD8 /* AlertVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D9D7D952B832B14006A1DD8 /* AlertVC.swift */; };
 		1D9D7D992B832FF8006A1DD8 /* UIViewController+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D9D7D982B832FF8006A1DD8 /* UIViewController+Ext.swift */; };
 		1D9D7D9B2B8495B1006A1DD8 /* AuthPassAlert.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D9D7D9A2B8495B1006A1DD8 /* AuthPassAlert.swift */; };
+		1DBF8F0C2B9F1C8300053BD8 /* SpeechRecognitionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1DBF8F0B2B9F1C8200053BD8 /* SpeechRecognitionManager.swift */; };
 		1DFD3DF32B9C47B200794738 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 1DFD3DF22B9C47B200794738 /* GoogleService-Info.plist */; };
 /* End PBXBuildFile section */
 
@@ -99,6 +100,7 @@
 		1D9D7D952B832B14006A1DD8 /* AlertVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertVC.swift; sourceTree = "<group>"; };
 		1D9D7D982B832FF8006A1DD8 /* UIViewController+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+Ext.swift"; sourceTree = "<group>"; };
 		1D9D7D9A2B8495B1006A1DD8 /* AuthPassAlert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthPassAlert.swift; sourceTree = "<group>"; };
+		1DBF8F0B2B9F1C8200053BD8 /* SpeechRecognitionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeechRecognitionManager.swift; sourceTree = "<group>"; };
 		1DFD3DF22B9C47B200794738 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -207,6 +209,7 @@
 				1D699D852B80D61400C9C6F2 /* AppDelegate.swift */,
 				1D699D8E2B80D61700C9C6F2 /* Assets.xcassets */,
 				1D699D872B80D61400C9C6F2 /* SceneDelegate.swift */,
+				1DBF8F0B2B9F1C8200053BD8 /* SpeechRecognitionManager.swift */,
 			);
 			path = Supporting;
 			sourceTree = "<group>";
@@ -395,6 +398,7 @@
 				1D699DDE2B8104CC00C9C6F2 /* EATitle.swift in Sources */,
 				1D699D8A2B80D61400C9C6F2 /* ViewController.swift in Sources */,
 				1D699DDC2B8100D500C9C6F2 /* TaskCell.swift in Sources */,
+				1DBF8F0C2B9F1C8300053BD8 /* SpeechRecognitionManager.swift in Sources */,
 				1D699D862B80D61400C9C6F2 /* AppDelegate.swift in Sources */,
 				1D699D882B80D61400C9C6F2 /* SceneDelegate.swift in Sources */,
 				1D699DE62B8117BF00C9C6F2 /* EATextView.swift in Sources */,
@@ -569,6 +573,8 @@
 				DEVELOPMENT_TEAM = 4NVD8GK9BF;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = noteor/Info.plist;
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Sesi duyabilmek için izninize ihtiyacımız var";
+				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "Sesi metine dönüştürmek için izninize ihtiyacımız var";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
@@ -597,6 +603,8 @@
 				DEVELOPMENT_TEAM = 4NVD8GK9BF;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = noteor/Info.plist;
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Sesi duyabilmek için izninize ihtiyacımız var";
+				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "Sesi metine dönüştürmek için izninize ihtiyacımız var";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;

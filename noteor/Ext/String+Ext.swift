@@ -19,5 +19,16 @@ extension String{
         return formatter.date(from: self)
     }
     
+    func turnToHour() -> Date?{
+        
+        let formatter = DateFormatter()
+        
+        formatter.dateFormat =  "HH-mm"
+        
+        
+        return formatter.date(from: self)
+        
+    }
+    
     
 }

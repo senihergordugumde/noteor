@@ -124,7 +124,7 @@ class NotesVC: UIViewController, UICollectionViewDelegate, UICollectionViewDataS
         
         filterField.leftViewMode = .always
         
-        imageView.image = UIImage(named: "mag")
+        imageView.image = UIImage(named: "mag")!.resized(toWidth: 36)
         
         filterField.leftView = imageView
         filterField.backgroundColor = .systemGray6
@@ -322,7 +322,12 @@ class NotesVC: UIViewController, UICollectionViewDelegate, UICollectionViewDataS
         
         let firestore = Firestore.firestore()
         
-        firestore.collection("Users").document(Auth.auth().currentUser?.email ?? "").collection("Notes").order(by: "StartDate").addSnapshotListener { snap, error in
+        
+        guard let userEmail = Auth.auth().currentUser?.email else {
+            
+            self.makeEAAlert(alertTitle: "Login Error", alertLabel: "You should SignIn First")
+            return}
+        firestore.collection("Users").document(userEmail).collection("Notes").order(by: "StartDate").addSnapshotListener { snap, error in
             
             
             guard let documents = snap?.documents else {

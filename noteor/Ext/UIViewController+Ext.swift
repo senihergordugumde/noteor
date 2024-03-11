@@ -7,6 +7,8 @@
 
 import Foundation
 import UIKit
+import AVFAudio
+import Speech
 
 extension UIViewController{
     
@@ -22,7 +24,7 @@ extension UIViewController{
         view.insertSubview(yellowTopImage, at: 0)
         NSLayoutConstraint.activate([
             
-            yellowTopImage.topAnchor.constraint(equalTo: view.topAnchor),
+            yellowTopImage.topAnchor.constraint(equalTo: view.topAnchor, constant: -150),
             yellowTopImage.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             yellowTopImage.widthAnchor.constraint(equalToConstant: 250),
             yellowTopImage.heightAnchor.constraint(equalToConstant: 200)
@@ -40,10 +42,10 @@ extension UIViewController{
         view.insertSubview(redTopImage, at: 0)
         NSLayoutConstraint.activate([
             
-            redTopImage.topAnchor.constraint(equalTo: view.topAnchor),
+            redTopImage.topAnchor.constraint(equalTo: view.topAnchor, constant: -150),
             redTopImage.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             redTopImage.widthAnchor.constraint(equalToConstant: 250),
-            redTopImage.heightAnchor.constraint(equalToConstant: 200)
+            redTopImage.heightAnchor.constraint(equalToConstant: 300)
             
         ])
         
@@ -106,9 +108,6 @@ extension UIViewController{
         
         
     }
-    
   
-   
-    
     
 }

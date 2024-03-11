@@ -8,11 +8,11 @@
 import UIKit
 import FirebaseFirestore
 import FirebaseAuth
+import Speech
 
-
-class AddItemVC: UIViewController,UIPickerViewDelegate,UIPickerViewDataSource, UITableViewDataSource, UITableViewDelegate, UITextFieldDelegate{
+class AddItemVC: UIViewController,UIPickerViewDelegate,UIPickerViewDataSource, UITableViewDataSource, UITableViewDelegate, UITextFieldDelegate, SFSpeechRecognizerDelegate{
   
-    
+    let speechButton = EAButton(title: " ", backgroundColor: .clear, cornerRadius: 15)
     
     let noteCategories = ["Work","Food","Gym"]
     var selectedCateg : String?
@@ -23,14 +23,107 @@ class AddItemVC: UIViewController,UIPickerViewDelegate,UIPickerViewDataSource, U
   
     let pickerView = UIPickerView()
     
+    let speechRec = SpeechRecognitionManager()
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        SFSpeechRecognizer.requestAuthorization { authStatus in
+                    OperationQueue.main.addOperation {
+                        switch authStatus {
+                        case .authorized:
+                            print("Speech recognition authorized")
+                        case .denied:
+                            print("User denied access to speech recognition")
+                        case .restricted:
+                            print("Speech recognition restricted on this device")
+                        case .notDetermined:
+                            print("Speech recognition not yet authorized")
+                        @unknown default:
+                            fatalError()
+                        }
+                    }
+                }
         
         configure()
         setData()
+        
       
 
+    }
+    
+
+    private func configureAddItemsBackground(){
+            
+            var yellowTopImage : UIImageView={
+                let imageView = UIImageView(image: UIImage(named: "back-blur"))
+                imageView.translatesAutoresizingMaskIntoConstraints = false
+                
+                return imageView
+            }()
+            
+            view.insertSubview(yellowTopImage, at: 0)
+            NSLayoutConstraint.activate([
+                
+                yellowTopImage.topAnchor.constraint(equalTo: navigationController?.navigationBar.topAnchor ?? view.topAnchor, constant: -150),
+                yellowTopImage.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+                yellowTopImage.widthAnchor.constraint(equalToConstant: 250),
+                yellowTopImage.heightAnchor.constraint(equalToConstant: 200)
+                
+            ])
+            
+            
+            var redTopImage : UIImageView={
+                let imageView = UIImageView(image: UIImage(named: "red-blur"))
+                imageView.translatesAutoresizingMaskIntoConstraints = false
+                
+                return imageView
+            }()
+            
+            view.insertSubview(redTopImage, at: 0)
+            NSLayoutConstraint.activate([
+                
+                redTopImage.topAnchor.constraint(equalTo: navigationController?.navigationBar.topAnchor ?? view.topAnchor, constant: -150),
+                redTopImage.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+                redTopImage.widthAnchor.constraint(equalToConstant: 250),
+                redTopImage.heightAnchor.constraint(equalToConstant: 300)
+                
+            ])
+            
+            
+            
+            var redBottomImage : UIImageView={
+                let imageView = UIImageView(image: UIImage(named: "redBottom"))
+                imageView.translatesAutoresizingMaskIntoConstraints = false
+                
+                return imageView
+            }()
+            
+            view.insertSubview(redBottomImage, at: 0)
+            NSLayoutConstraint.activate([
+                
+                redBottomImage.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+                redBottomImage.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+                redBottomImage.widthAnchor.constraint(equalToConstant: 250),
+                redBottomImage.heightAnchor.constraint(equalToConstant: 120)
+                
+            ])
+            
+            
+      
     }
     
     
@@ -43,7 +136,7 @@ class AddItemVC: UIViewController,UIPickerViewDelegate,UIPickerViewDataSource, U
         let trashButton =  UIBarButtonItem(image: UIImage(systemName: "trash"), style: .done, target: self, action: #selector(trashClicked))
         let topRightButtons = [saveButton,editButton,trashButton]
 
-        self.navigationController?.navigationBar.prefersLargeTitles = false
+        self.navigationController?.navigationBar.prefersLargeTitles = true
         self.navigationItem.title = "Add Note"
         
         view.backgroundColor = .systemBackground
@@ -127,7 +220,10 @@ class AddItemVC: UIViewController,UIPickerViewDelegate,UIPickerViewDataSource, U
         guard let note = note else {return}
         
         startDate.text = note.StartDate.formatted(date: .complete, time: .omitted)
+        startTime.text = note.StartTime.formatted(date: .omitted, time: .shortened)
         endDate.text = note.EndDate.formatted(date: .complete, time: .omitted)
+        endTime.text = note.EndTime.formatted(date: .omitted, time: .shortened)
+
         titleInput.text = note.Title
         noteInput.text = note.Descr
         EditVC.lock = note.Lock
@@ -194,6 +290,7 @@ class AddItemVC: UIViewController,UIPickerViewDelegate,UIPickerViewDataSource, U
         titleText.text = "Task Title*"
         mainView.addSubview(titleText)
         mainView.addSubview(titleInput)
+        mainView.addSubview(speechButton)
         NSLayoutConstraint.activate([
             
             titleText.bottomAnchor.constraint(equalTo: titleInput.topAnchor, constant: -20),
@@ -204,7 +301,7 @@ class AddItemVC: UIViewController,UIPickerViewDelegate,UIPickerViewDataSource, U
         ])
         
         let titleLogo = UIImageView(frame: CGRectMake(10, 0, 20, 20))
-        titleLogo.image = UIImage(named: "titleTag")?.resized(toWidth: 50)
+        titleLogo.image = UIImage(named: "titleTag")?.resized(toWidth: 100)
         
       
 
@@ -213,19 +310,39 @@ class AddItemVC: UIViewController,UIPickerViewDelegate,UIPickerViewDataSource, U
         titleInput.leftView = titleLogo
         titleInput.layer.borderWidth = 0
         
+        speechButton.setImage(UIImage(named: "mic"), for: .normal)
+        NSLayoutConstraint.activate([
+        
+            speechButton.topAnchor.constraint(equalTo: mainView.safeAreaLayoutGuide.topAnchor, constant: 80),
+            speechButton.trailingAnchor.constraint(equalTo: mainView.trailingAnchor, constant: -20),
+            speechButton.widthAnchor.constraint(equalToConstant: 50),
+            speechButton.heightAnchor.constraint(equalToConstant: 50)
+        
+        
+        ])
+        
         NSLayoutConstraint.activate([
             
             titleInput.topAnchor.constraint(equalTo: mainView.safeAreaLayoutGuide.topAnchor, constant: 80),
             
             titleInput.leadingAnchor.constraint(equalTo: mainView.leadingAnchor, constant: 20),
-            titleInput.trailingAnchor.constraint(equalTo: mainView.trailingAnchor, constant: -20),
+            titleInput.trailingAnchor.constraint(equalTo: speechButton.leadingAnchor, constant: -20),
             titleInput.heightAnchor.constraint(equalToConstant: 50)
             
             
         ])
         
+        speechButton.addTarget(self, action: #selector(speech), for: .touchUpInside)
+       
+    }
+     
+    
+    @objc func speech(){
+      
+        speechRec.configureAudioEngine(textField: titleInput, button: speechButton)
         
     }
+    
     //MARK: - Todo Add
     
     let tableView = UITableView()
@@ -357,8 +474,8 @@ class AddItemVC: UIViewController,UIPickerViewDelegate,UIPickerViewDataSource, U
         
             addButton.topAnchor.constraint(equalTo: taskAddText.bottomAnchor, constant: 20),
             addButton.leadingAnchor.constraint(equalTo: titleInput.leadingAnchor),
-            addButton.widthAnchor.constraint(equalToConstant: 40),
-            addButton.heightAnchor.constraint(equalToConstant: 40)
+            addButton.widthAnchor.constraint(equalToConstant: 60),
+            addButton.heightAnchor.constraint(equalToConstant: 60)
         
         
         ])
@@ -467,7 +584,7 @@ class AddItemVC: UIViewController,UIPickerViewDelegate,UIPickerViewDataSource, U
         startDate.backgroundColor = .clear
         startDate.layer.borderWidth = 1
         startDate.rightViewMode = .always
-        startDate.rightView = UIImageView(image: UIImage(named: "mag"))
+        startDate.rightView = UIImageView(image: UIImage(named: "calendar")?.resized(toWidth: 25))
         NSLayoutConstraint.activate([
             
             startDateText.topAnchor.constraint(equalTo: noteInput.bottomAnchor, constant: 20),
@@ -500,7 +617,7 @@ class AddItemVC: UIViewController,UIPickerViewDelegate,UIPickerViewDataSource, U
         startTime.backgroundColor = .clear
         startTime.layer.borderWidth = 1
         startTime.rightViewMode = .always
-        startTime.rightView = UIImageView(image: UIImage(named: "mag"))
+        startTime.rightView = UIImageView(image: UIImage(named: "hourglass")?.resized(toWidth: 25))
         NSLayoutConstraint.activate([
             
             startTimeText.topAnchor.constraint(equalTo: startDate.bottomAnchor, constant: 20),
@@ -535,7 +652,7 @@ class AddItemVC: UIViewController,UIPickerViewDelegate,UIPickerViewDataSource, U
         endDate.layer.borderWidth = 1
         endDate.rightViewMode = .always
 
-        endDate.rightView = UIImageView(image: UIImage(named: "mag"))
+        endDate.rightView = UIImageView(image: UIImage(named: "calendar")?.resized(toWidth: 25))
         NSLayoutConstraint.activate([
             
             endDateText.topAnchor.constraint(equalTo: noteInput.bottomAnchor, constant: 20),
@@ -572,7 +689,7 @@ class AddItemVC: UIViewController,UIPickerViewDelegate,UIPickerViewDataSource, U
         endTime.backgroundColor = .clear
         endTime.layer.borderWidth = 1
         endTime.rightViewMode = .always
-        endTime.rightView = UIImageView(image: UIImage(named: "mag"))
+        endTime.rightView = UIImageView(image: UIImage(named: "hourglas")?.resized(toWidth: 25))
         NSLayoutConstraint.activate([
             
             endTimeText.topAnchor.constraint(equalTo: endDate.bottomAnchor, constant: 20),
@@ -685,7 +802,7 @@ class AddItemVC: UIViewController,UIPickerViewDelegate,UIPickerViewDataSource, U
                 .document((Auth.auth()
                 .currentUser?.email)!)
                 .collection("Notes")
-                .addDocument(from: Notes(Title: titleInput.text!, Color: EditVC.selectedColor , Descr: noteInput.text!, Lock:EditVC.lock, Categ: self.selectedCateg ?? self.noteCategories[0], StartDate: startDate.text?.turnToDate() ?? Date(), EndDate : endDate.text?.turnToDate() ?? Date(), tasks : toDoList))
+                .addDocument(from: Notes(Title: titleInput.text!, Color: EditVC.selectedColor , Descr: noteInput.text!, Lock:EditVC.lock, Categ: self.selectedCateg ?? self.noteCategories[0], StartDate: startDate.text?.turnToDate() ?? Date(), EndDate : endDate.text?.turnToDate() ?? Date(), StartTime: startTime.text?.turnToHour() ?? Date(), EndTime: endTime.text?.turnToHour() ??  Date(), tasks: toDoList))
             
             
             

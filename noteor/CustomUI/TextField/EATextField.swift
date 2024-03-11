@@ -33,7 +33,7 @@ class EATextField: UITextField {
         
         self.translatesAutoresizingMaskIntoConstraints = false
       
-        self.layer.cornerRadius = 10
+        self.layer.cornerRadius = 6
         self.layer.borderWidth = 2
         self.layer.borderColor = UIColor.systemGray4.cgColor
         self.tintColor = .systemGreen
