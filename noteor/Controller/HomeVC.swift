@@ -43,7 +43,7 @@ class HomeVC: UIViewController, UICollectionViewDelegate, UICollectionViewDataSo
     private let colTableBack : UIView = {
        let view = UIView()
         
-        view.backgroundColor = .white
+        view.backgroundColor = .secondarySystemBackground
         view.translatesAutoresizingMaskIntoConstraints = false
         view.layer.cornerRadius = 20
 
@@ -53,11 +53,11 @@ class HomeVC: UIViewController, UICollectionViewDelegate, UICollectionViewDataSo
     
     
     let categoriesText = EATitle(textAlignment: .left, fontSize: 16)
-    let calendarButton = EAButton(title: "", backgroundColor: .white, cornerRadius: 0)
+    let calendarButton = EAButton(title: "", backgroundColor: .clear, cornerRadius: 0)
     
     private func configurecolTableBack(){
         
-     
+        
      
         categoriesText.text = "Categories"
   
@@ -149,6 +149,7 @@ class HomeVC: UIViewController, UICollectionViewDelegate, UICollectionViewDataSo
         
         collectionView.register(CategCell.self, forCellWithReuseIdentifier: CategCell.id)
         
+        collectionView.backgroundColor = .clear
     }
     
     private func createLayout() -> UICollectionViewFlowLayout {
@@ -250,9 +251,11 @@ class HomeVC: UIViewController, UICollectionViewDelegate, UICollectionViewDataSo
             
             for j in notes{
                 
+                print(j.StartDate)
+                print(j.EndDate)
+            
                 
-                
-                if (categories[indexPath.row] == j.Categ) && (j.StartDate < Date() && j.EndDate > Date())      {
+                if (categories[indexPath.row] == j.Categ) && ((j.StartDate <= Date()) && (j.EndDate >= Date()))      {
                     count += 1
                 }
             }

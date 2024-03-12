@@ -21,7 +21,7 @@ struct Notes : Identifiable, Codable{
     var EndDate : Date
     var StartTime : Date
     var EndTime : Date
-
+    var isCompleted : String
     var tasks : [tasks]
    
     

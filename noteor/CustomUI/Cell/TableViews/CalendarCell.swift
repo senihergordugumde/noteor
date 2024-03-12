@@ -23,28 +23,39 @@ class CalendarCell: UITableViewCell {
     
     
     
-    let startDate = EALabel(textAlignment: .center, fontSize: 16)
-    let endDate = EALabel(textAlignment: .center, fontSize: 16)
+    let startTime = EALabel(textAlignment: .center, fontSize: 16)
+    let endTime = EALabel(textAlignment: .center, fontSize: 16)
+    let taskTitle = EATitle(textAlignment: .center, fontSize: 16)
     private func configure(){
         
-        self.addSubview(startDate)
-        self.addSubview(endDate)
+        self.addSubview(startTime)
+        self.addSubview(taskTitle)
+        self.addSubview(endTime)
 
         NSLayoutConstraint.activate([
         
-            startDate.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 20),
-            startDate.centerYAnchor.constraint(equalTo: centerYAnchor),
-            startDate.widthAnchor.constraint(equalToConstant: 60),
-            startDate.heightAnchor.constraint(equalToConstant: 60)
+            startTime.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 20),
+            startTime.centerYAnchor.constraint(equalTo: centerYAnchor),
+            startTime.widthAnchor.constraint(equalToConstant: 60),
+            startTime.heightAnchor.constraint(equalToConstant: 60)
         
         ])
         
         NSLayoutConstraint.activate([
         
-            endDate.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -20),
-            endDate.centerYAnchor.constraint(equalTo: centerYAnchor),
-            endDate.widthAnchor.constraint(equalToConstant: 60),
-            endDate.heightAnchor.constraint(equalToConstant: 60)
+            taskTitle.centerYAnchor.constraint(equalTo: centerYAnchor),
+            taskTitle.centerXAnchor.constraint(equalTo: centerXAnchor),
+            taskTitle.widthAnchor.constraint(equalToConstant: 100),
+            taskTitle.heightAnchor.constraint(equalToConstant: 50)
+        
+        ])
+        
+        NSLayoutConstraint.activate([
+        
+            endTime.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -20),
+            endTime.centerYAnchor.constraint(equalTo: centerYAnchor),
+            endTime.widthAnchor.constraint(equalToConstant: 60),
+            endTime.heightAnchor.constraint(equalToConstant: 60)
         
         ])
         
@@ -54,8 +65,9 @@ class CalendarCell: UITableViewCell {
     
     func set (note : Notes){
         
-        startDate.text = note.StartDate.formatted(date: .complete, time: .omitted)
-        endDate.text = note.EndDate.formatted(date: .complete, time: .omitted)
+        startTime.text = note.StartTime.formatted(date: .omitted, time: .shortened)
+        endTime.text = note.EndTime.formatted(date: .omitted, time: .shortened)
+        taskTitle.text = note.Title
         
     }
     

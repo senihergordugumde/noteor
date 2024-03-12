@@ -9,6 +9,8 @@ import UIKit
 
 class TaskCell: UICollectionViewCell {
     let colorView = UIView()
+    
+    var action : (() -> Void)?
 
     let title = EATitle(textAlignment: .left, fontSize: 16)
     let label = EALabel(textAlignment: .left, fontSize: 12)
@@ -30,13 +32,13 @@ class TaskCell: UICollectionViewCell {
         
         
     }
-    
+    let statusButton = EAButton(title: "", backgroundColor: .clear, cornerRadius: 0)
     private func configure(){
         //MARK: - Cell BG
         configureBackground()
         
         
-        backgroundColor = .white
+        backgroundColor = .systemBackground
     
   
         //MARK: - Wood
@@ -79,7 +81,7 @@ class TaskCell: UICollectionViewCell {
             colorView.topAnchor.constraint(equalTo: wood.bottomAnchor, constant: 50),
             colorView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 0),
             colorView.trailingAnchor.constraint(equalTo: trailingAnchor, constant:0),
-            colorView.bottomAnchor.constraint(equalTo: bottomAnchor)
+            colorView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -25)
         
         ])
         colorView.layer.cornerRadius = 30
@@ -96,7 +98,7 @@ class TaskCell: UICollectionViewCell {
         NSLayoutConstraint.activate([
             titleImage.topAnchor.constraint(equalTo: colorView.topAnchor, constant: 20),
             titleImage.leadingAnchor.constraint(equalTo: colorView.leadingAnchor, constant: 120),
-            titleImage.widthAnchor.constraint(equalToConstant: 60),
+            titleImage.widthAnchor.constraint(equalToConstant: 50),
             titleImage.heightAnchor.constraint(equalToConstant: 48),
             
             title.centerYAnchor.constraint(equalTo: titleImage.centerYAnchor),
@@ -143,34 +145,69 @@ class TaskCell: UICollectionViewCell {
         //MARK: - Time
 
         
-        colorView.addSubview(time)
+        //colorView.addSubview(time)
         
        
        
-        time.translatesAutoresizingMaskIntoConstraints = false
+        //  time.translatesAutoresizingMaskIntoConstraints = false
        
-        time.datePickerMode = .date
+        //  time.datePickerMode = .date
         
-        time.isUserInteractionEnabled = false
+        // time.isUserInteractionEnabled = false
         
     
         
         
        
 
-        NSLayoutConstraint.activate([
+        // NSLayoutConstraint.activate([
         
-            time.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -15),
-            time.leadingAnchor.constraint(equalTo: colorView.leadingAnchor, constant: 5),
-            time.trailingAnchor.constraint(equalTo: colorView.trailingAnchor, constant: -15),
-            time.heightAnchor.constraint(equalToConstant: 25)
+        //  time.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -15),
+        //  time.leadingAnchor.constraint(equalTo: colorView.leadingAnchor),
+        //  time.widthAnchor.constraint(equalToConstant: 100),
+        // time.heightAnchor.constraint(equalToConstant: 25)
           
         
         
-        ])
+        //])
+        //MARK: - Status Button
+       
         
+  
+            
+        self.addSubview(statusButton)
+        
+        
+        NSLayoutConstraint.activate([
+        
+            statusButton.topAnchor.constraint(equalTo: colorView.bottomAnchor, constant: -35),
+            statusButton.trailingAnchor.constraint(equalTo: colorView.trailingAnchor, constant: -20),
+            statusButton.widthAnchor.constraint(equalToConstant: 70),
+            statusButton.bottomAnchor.constraint(equalTo: bottomAnchor)
+
+        ])
+            
+    
+        statusButton.addTarget(self, action: #selector(statusButtonClicked), for: .touchUpInside)
+       
+    }
+    
+    @objc func statusButtonClicked(){
+        
+        action?()
         
     }
+    
+    
+    
+    
+        
+    
+ 
+    
+    
+    
+   
     
     
     //MARK: - Background
@@ -207,6 +244,8 @@ class TaskCell: UICollectionViewCell {
         
     }
     
+    //MARK: - Set
+    
     func set (note : Notes){
         
         
@@ -215,6 +254,20 @@ class TaskCell: UICollectionViewCell {
         time.date = note.StartDate
         colorView.backgroundColor = UIColor(named: note.Color)
         categImage.image = UIImage(named: note.Categ)
+        
+        
+        if note.isCompleted == "doing"{
+            statusButton.setImage(UIImage(named: "Doing"), for: .normal)
+        }
+        
+        if note.isCompleted == "done"{
+            statusButton.setImage(UIImage(named: "Done"), for: .normal)
+        }
+        if note.isCompleted == "dont"{
+            statusButton.setImage(UIImage(named: "Dont"), for: .normal)
+        }
+        
+        
         if note.Lock{
             label.text = "Need Password 🔐"
         }else{

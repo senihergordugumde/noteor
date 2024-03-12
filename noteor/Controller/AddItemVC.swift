@@ -12,7 +12,6 @@ import Speech
 
 class AddItemVC: UIViewController,UIPickerViewDelegate,UIPickerViewDataSource, UITableViewDataSource, UITableViewDelegate, UITextFieldDelegate, SFSpeechRecognizerDelegate{
   
-    let speechButton = EAButton(title: " ", backgroundColor: .clear, cornerRadius: 15)
     
     let noteCategories = ["Work","Food","Gym"]
     var selectedCateg : String?
@@ -35,8 +34,7 @@ class AddItemVC: UIViewController,UIPickerViewDelegate,UIPickerViewDataSource, U
     
     
     
-    
-    
+    //MARK: - Life Cycle
     
     
     override func viewDidLoad() {
@@ -65,7 +63,7 @@ class AddItemVC: UIViewController,UIPickerViewDelegate,UIPickerViewDataSource, U
 
     }
     
-
+    //MARK: - Background Configure
     private func configureAddItemsBackground(){
             
             var yellowTopImage : UIImageView={
@@ -284,13 +282,13 @@ class AddItemVC: UIViewController,UIPickerViewDelegate,UIPickerViewDataSource, U
     
     //MARK: - TitleInput
     let titleText = EATitle(textAlignment: .left, fontSize: 24)
-
     let titleInput = EATextField(placeholder: "Notes Title", isSecureTextEntry: false, textAlignment: .center)
     private func configureTitleInput(){
         titleText.text = "Task Title*"
         mainView.addSubview(titleText)
         mainView.addSubview(titleInput)
-        mainView.addSubview(speechButton)
+        mainView.addSubview(titleSpeechButton)
+
         NSLayoutConstraint.activate([
             
             titleText.bottomAnchor.constraint(equalTo: titleInput.topAnchor, constant: -20),
@@ -309,39 +307,47 @@ class AddItemVC: UIViewController,UIPickerViewDelegate,UIPickerViewDataSource, U
         titleInput.leftViewMode = .always
         titleInput.leftView = titleLogo
         titleInput.layer.borderWidth = 0
-        
-        speechButton.setImage(UIImage(named: "mic"), for: .normal)
-        NSLayoutConstraint.activate([
-        
-            speechButton.topAnchor.constraint(equalTo: mainView.safeAreaLayoutGuide.topAnchor, constant: 80),
-            speechButton.trailingAnchor.constraint(equalTo: mainView.trailingAnchor, constant: -20),
-            speechButton.widthAnchor.constraint(equalToConstant: 50),
-            speechButton.heightAnchor.constraint(equalToConstant: 50)
-        
-        
-        ])
-        
         NSLayoutConstraint.activate([
             
             titleInput.topAnchor.constraint(equalTo: mainView.safeAreaLayoutGuide.topAnchor, constant: 80),
             
             titleInput.leadingAnchor.constraint(equalTo: mainView.leadingAnchor, constant: 20),
-            titleInput.trailingAnchor.constraint(equalTo: speechButton.leadingAnchor, constant: -20),
+            titleInput.trailingAnchor.constraint(equalTo: titleSpeechButton.leadingAnchor, constant: -20),
             titleInput.heightAnchor.constraint(equalToConstant: 50)
             
             
         ])
         
-        speechButton.addTarget(self, action: #selector(speech), for: .touchUpInside)
+        
+        //Speech Button Config
+        titleSpeechButton.setImage(UIImage(named: "mic"), for: .normal)
+        NSLayoutConstraint.activate([
+        
+            titleSpeechButton.topAnchor.constraint(equalTo: mainView.safeAreaLayoutGuide.topAnchor, constant: 80),
+            titleSpeechButton.trailingAnchor.constraint(equalTo: mainView.trailingAnchor, constant: -20),
+            titleSpeechButton.widthAnchor.constraint(equalToConstant: 50),
+            titleSpeechButton.heightAnchor.constraint(equalToConstant: 50)
+        
+        
+        ])
+        
+        
+        
+        titleSpeechButton.addTarget(self, action: #selector(titleSpeechButtonClicked), for: .touchUpInside)
        
     }
      
     
-    @objc func speech(){
+    //MARK: - SpeechConfig
+    let titleSpeechButton = EAButton(title: " ", backgroundColor: .clear, cornerRadius: 15)
+    @objc func titleSpeechButtonClicked(){
       
-        speechRec.configureAudioEngine(textField: titleInput, button: speechButton)
+        speechRec.configureAudioEngine(textField: titleInput, button: titleSpeechButton, textView: nil)
         
     }
+    
+    let descrSpeechButton = EAButton(title: " ", backgroundColor: .clear, cornerRadius: 15)
+    
     
     //MARK: - Todo Add
     
@@ -354,9 +360,9 @@ class AddItemVC: UIViewController,UIPickerViewDelegate,UIPickerViewDataSource, U
     
     let todoTextField = EATextField(placeholder: "Enter Your Task 🥹", isSecureTextEntry: false, textAlignment: .center)
     
-    
+    //ToDo TableView
     private func configureTableView(){
-        //MARK: - Configure Todo tableView
+        
 
         tableView.translatesAutoresizingMaskIntoConstraints = false
         tableView.delegate = self
@@ -379,10 +385,9 @@ class AddItemVC: UIViewController,UIPickerViewDelegate,UIPickerViewDataSource, U
         tableViewHeight?.isActive = true
     }
     
-    
-    
-    //MARK: -  Todo Table View Delegate
-
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 50
+    }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         toDoList.count
@@ -422,9 +427,7 @@ class AddItemVC: UIViewController,UIPickerViewDelegate,UIPickerViewDataSource, U
         return cell
     }
     
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 50
-    }
+  
     
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         
@@ -485,7 +488,7 @@ class AddItemVC: UIViewController,UIPickerViewDelegate,UIPickerViewDataSource, U
         NSLayoutConstraint.activate([
         
             todoTextField.topAnchor.constraint(equalTo: addButton.topAnchor),
-            todoTextField.trailingAnchor.constraint(equalTo: titleInput.trailingAnchor),
+            todoTextField.trailingAnchor.constraint(equalTo: titleSpeechButton.trailingAnchor),
             todoTextField.leadingAnchor.constraint(equalTo: addButton.trailingAnchor, constant: 20),
             todoTextField.heightAnchor.constraint(equalToConstant: 40)
         
@@ -516,6 +519,8 @@ class AddItemVC: UIViewController,UIPickerViewDelegate,UIPickerViewDataSource, U
                 UIView.animate(withDuration: 1.0) {
                     
                     self.mainView.layoutIfNeeded()
+                    
+                    self.todoTextField.text = ""
                 }
                 
                 self.tableView.reloadData()
@@ -541,6 +546,8 @@ class AddItemVC: UIViewController,UIPickerViewDelegate,UIPickerViewDataSource, U
         mainView.addSubview(noteInput)
         mainView.addSubview(image)
         mainView.addSubview(descrText)
+        mainView.addSubview(descrSpeechButton)
+
         image.translatesAutoresizingMaskIntoConstraints = false
         noteInput.backgroundColor = .systemGray6
         noteInput.layer.borderWidth = 0
@@ -554,7 +561,7 @@ class AddItemVC: UIViewController,UIPickerViewDelegate,UIPickerViewDataSource, U
             
             noteInput.topAnchor.constraint(equalTo: descrText.bottomAnchor, constant: 20),
             noteInput.leadingAnchor.constraint(equalTo: titleInput.leadingAnchor,constant: 50),
-            noteInput.trailingAnchor.constraint(equalTo: mainView.trailingAnchor, constant: -20),
+            noteInput.trailingAnchor.constraint(equalTo: descrSpeechButton.leadingAnchor, constant: -20),
             noteInput.heightAnchor.constraint(equalToConstant: 200),
             
             image.topAnchor.constraint(equalTo: noteInput.topAnchor),
@@ -566,9 +573,27 @@ class AddItemVC: UIViewController,UIPickerViewDelegate,UIPickerViewDataSource, U
             
         ])
         
+        //Speech Button Config
+        descrSpeechButton.setImage(UIImage(named: "mic"), for: .normal)
+        NSLayoutConstraint.activate([
+        
+            descrSpeechButton.topAnchor.constraint(equalTo: noteInput.topAnchor),
+            descrSpeechButton.trailingAnchor.constraint(equalTo: mainView.trailingAnchor, constant: -20),
+            descrSpeechButton.widthAnchor.constraint(equalToConstant: 50),
+            descrSpeechButton.heightAnchor.constraint(equalToConstant: 50)
+        
+        
+        ])
+        
+        
+        
+        descrSpeechButton.addTarget(self, action: #selector(descrSpeechButtonClicked), for: .touchUpInside)
         
     }
     
+    @objc func descrSpeechButtonClicked(){
+        self.speechRec.configureAudioEngine(textField: nil, button: descrSpeechButton, textView: noteInput)
+    }
     
     //MARK: - Start Date
     
@@ -594,7 +619,6 @@ class AddItemVC: UIViewController,UIPickerViewDelegate,UIPickerViewDataSource, U
 
             
             startDate.topAnchor.constraint(equalTo: startDateText.bottomAnchor, constant: 20),
-            
             startDate.leadingAnchor.constraint(equalTo: image.leadingAnchor),
             startDate.widthAnchor.constraint(equalToConstant: 150),
             startDate.heightAnchor.constraint(equalToConstant: 60),
@@ -665,7 +689,7 @@ class AddItemVC: UIViewController,UIPickerViewDelegate,UIPickerViewDataSource, U
             endDate.topAnchor.constraint(equalTo: endDateText.bottomAnchor, constant: 20),
             
             endDate.widthAnchor.constraint(equalToConstant: 150),
-            endDate.trailingAnchor.constraint(equalTo: noteInput.trailingAnchor),
+            endDate.trailingAnchor.constraint(equalTo: descrSpeechButton.trailingAnchor),
             endDate.heightAnchor.constraint(equalToConstant: 60),
            
             
@@ -753,6 +777,8 @@ class AddItemVC: UIViewController,UIPickerViewDelegate,UIPickerViewDataSource, U
 
         }else{
             selectedField.text = datePicker.date.formatted(date: .omitted, time: .shortened)
+            print(selectedField.text?.turnToHour())
+
 
         }
         self.view.endEditing(true)
@@ -784,7 +810,7 @@ class AddItemVC: UIViewController,UIPickerViewDelegate,UIPickerViewDataSource, U
     
     
     @objc func saveClicked(){
-        
+
         guard titleInput.text != "" else {
             makeEAAlert(alertTitle: "Error", alertLabel: "You must write a Title 📝")
             return
@@ -802,7 +828,7 @@ class AddItemVC: UIViewController,UIPickerViewDelegate,UIPickerViewDataSource, U
                 .document((Auth.auth()
                 .currentUser?.email)!)
                 .collection("Notes")
-                .addDocument(from: Notes(Title: titleInput.text!, Color: EditVC.selectedColor , Descr: noteInput.text!, Lock:EditVC.lock, Categ: self.selectedCateg ?? self.noteCategories[0], StartDate: startDate.text?.turnToDate() ?? Date(), EndDate : endDate.text?.turnToDate() ?? Date(), StartTime: startTime.text?.turnToHour() ?? Date(), EndTime: endTime.text?.turnToHour() ??  Date(), tasks: toDoList))
+                .addDocument(from: Notes(Title: titleInput.text!, Color: EditVC.selectedColor , Descr: noteInput.text!, Lock:EditVC.lock, Categ: self.selectedCateg ?? self.noteCategories[0], StartDate: startDate.text?.turnToDate() ?? Date(), EndDate : endDate.text?.turnToDate() ?? Date(), StartTime: startTime.text?.turnToHour() ?? Date(), EndTime: endTime.text?.turnToHour() ??  Date(), isCompleted: "doing", tasks: toDoList))
             
             
             

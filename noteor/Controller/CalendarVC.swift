@@ -32,7 +32,7 @@ class CalendarVC: UIViewController, FSCalendarDelegate, FSCalendarDataSource, UI
         self.navigationItem.title = "Calendar"
         self.navigationController?.navigationBar.prefersLargeTitles = true
   
-        view.backgroundColor = .white
+        view.backgroundColor = .secondarySystemBackground
 
         configureCalendar()
         configureTableView()
@@ -97,13 +97,13 @@ class CalendarVC: UIViewController, FSCalendarDelegate, FSCalendarDataSource, UI
         
         calendar.delegate = self
         calendar.dataSource = self
-        calendar.backgroundColor = .white
+        calendar.backgroundColor = .secondarySystemBackground
      
         calendar.appearance.selectionColor = UIColor(named: "Red")
-        calendar.appearance.headerTitleColor = .black
+        calendar.appearance.headerTitleColor = .label
         calendar.appearance.weekdayTextColor = UIColor(named: "Red")
         calendar.appearance.weekdayFont = .boldSystemFont(ofSize: 16)
-        
+        calendar.appearance.titleDefaultColor = .label
 
     }
     

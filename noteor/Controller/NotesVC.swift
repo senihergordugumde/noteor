@@ -24,8 +24,8 @@ class NotesVC: UIViewController, UICollectionViewDelegate, UICollectionViewDataS
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        view.backgroundColor = UIColor(named: "Yellow")
+        print(view.frame.height)
+        view.backgroundColor = .white
         
         self.navigationController?.pushViewController(AddItemVC(), animated: true)
         configureTopView()
@@ -39,16 +39,16 @@ class NotesVC: UIViewController, UICollectionViewDelegate, UICollectionViewDataS
 
     }
     
-  
 
-   
+
+    
     
     //MARK: -  TopView
     
     private let topView : UIView = {
        let view = UIView()
         
-        view.backgroundColor = .white
+        view.backgroundColor = .secondarySystemBackground
         view.translatesAutoresizingMaskIntoConstraints = false
         view.layer.cornerRadius = 20
         
@@ -69,20 +69,20 @@ class NotesVC: UIViewController, UICollectionViewDelegate, UICollectionViewDataS
             topView.topAnchor.constraint(equalTo: view.topAnchor),
             topView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             topView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            topView.heightAnchor.constraint(equalToConstant: 350)
+            topView.heightAnchor.constraint(equalToConstant: CGFloat(view.frame.height / 3))
         
         ])
 
         
         configureFilterField()
         configureFilterButton()
-        configureDate()
+       
         configureTopBar()
-
+        configureDate()
         
     }
     //MARK: - Filter
-    let filterButton = EAButton(title: "Filter", backgroundColor: UIColor(named: "blue") ?? .systemCyan, cornerRadius: 20)
+    let filterButton = EAButton(title: "Filter", backgroundColor: UIColor(named: "Work") ?? .systemCyan, cornerRadius: 20)
     let filterField = EATextField(placeholder: "", isSecureTextEntry: false, textAlignment: .left)
     var filteredNotes = [Notes]()
 
@@ -159,7 +159,7 @@ class NotesVC: UIViewController, UICollectionViewDelegate, UICollectionViewDataS
             
             currentDataTitle.bottomAnchor.constraint(equalTo: filterField.topAnchor, constant: -30),
             currentDataTitle.centerXAnchor.constraint(equalTo: topView.centerXAnchor),
-            currentDataTitle.heightAnchor.constraint(equalToConstant: 50),
+            currentDataTitle.topAnchor.constraint(equalTo: task.bottomAnchor, constant: 10),
             currentDataTitle.widthAnchor.constraint(equalTo: topView.widthAnchor)
             
         ])
@@ -167,11 +167,11 @@ class NotesVC: UIViewController, UICollectionViewDelegate, UICollectionViewDataS
     }
     
     //MARK: - TopBar
-    
+    let logo = UIImageView(image: UIImage(named: "logo"))
+    let task = UIImageView(image: UIImage(named: "task"))
+    let taskTitle = EATitle(textAlignment: .left, fontSize: 36)
     private func configureTopBar(){
-        let logo = UIImageView(image: UIImage(named: "logo"))
-        let task = UIImageView(image: UIImage(named: "task"))
-        let taskTitle = EATitle(textAlignment: .left, fontSize: 36)
+        
         taskTitle.text = "Task"
         logo.translatesAutoresizingMaskIntoConstraints = false
         task.translatesAutoresizingMaskIntoConstraints = false
@@ -256,7 +256,7 @@ class NotesVC: UIViewController, UICollectionViewDelegate, UICollectionViewDataS
         let minimumItemSpace : CGFloat = 12
         let newWidth =  width - (padding * 2) - (minimumItemSpace * 2)
         let itemWidth = newWidth
-        layout.itemSize = .init(width: itemWidth, height: itemWidth - 100)
+        layout.itemSize = .init(width: itemWidth, height: 295)
         layout.sectionInset = .init(top: padding, left: padding, bottom: padding, right: padding)
         
         return layout
@@ -285,12 +285,53 @@ class NotesVC: UIViewController, UICollectionViewDelegate, UICollectionViewDataS
         
         if filterField.text != ""{
             cell.set(note: filteredNotes[indexPath.row])
+            cell.action = {
+                
+                if self.filteredNotes[indexPath.row].isCompleted == "done"{
+                    cell.statusButton.setImage(UIImage(named: "Dont"), for: .normal)
+                    self.filteredNotes[indexPath.row].isCompleted = "dont"
+                }
+                
+                if self.filteredNotes[indexPath.row].isCompleted == "dont"{
+                    cell.statusButton.setImage(UIImage(named: "Done"), for: .normal)
+                    self.filteredNotes[indexPath.row].isCompleted = "done"
+                }else{
+                    return
+                }
+                
+            }
 
         }
         else{
             cell.set(note: notes[indexPath.row])
+            
+            cell.action = {
+                
+                if self.notes[indexPath.row].isCompleted == "done"{
+                    cell.statusButton.setImage(UIImage(named: "Dont"), for: .normal)
+                    self.notes[indexPath.row].isCompleted = "dont"
+                    
+                    self.updateData(id: self.notes[indexPath.row].id!, data: ["isCompleted" : self.notes[indexPath.row].isCompleted ])
+                    
+                    self.collectionView.reloadData()
+                }
+                
+                else if self.notes[indexPath.row].isCompleted == "dont"{
+                    cell.statusButton.setImage(UIImage(named: "Done"), for: .normal)
+                    self.notes[indexPath.row].isCompleted = "done"
+                    self.updateData(id: self.notes[indexPath.row].id!, data: ["isCompleted" : self.notes[indexPath.row].isCompleted ])
+                    
+                    self.collectionView.reloadData()
+
+                }else{
+                    return
+                }
+                
+            }
 
         }
+      
+        
         
         return cell
        
@@ -366,4 +407,33 @@ class NotesVC: UIViewController, UICollectionViewDelegate, UICollectionViewDataS
         
         
     }
+    
+    
+    func updateData(id : String, data : [AnyHashable : Any]){
+        
+        let firestore = Firestore.firestore()
+        
+        
+        guard let userEmail = Auth.auth().currentUser?.email else {
+            
+            self.makeEAAlert(alertTitle: "Login Error", alertLabel: "You should SignIn First")
+            return}
+        
+        
+            let path = firestore.collection("Users").document(userEmail).collection("Notes").document(id)
+        
+        
+        do {
+            try path.updateData(data)
+        }
+        catch{
+            print("error update")
+        }
+        
+    }
+            
+           
+        
+        
+    
 }

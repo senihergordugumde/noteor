@@ -12,7 +12,7 @@ import AVFoundation
 
 
 protocol SpeechRecognitionProtocol{
-    func configureAudioEngine(textField : UITextField, button : UIButton)
+    func configureAudioEngine(textField : UITextField?, button : UIButton, textView : UITextView?)
 }
 
 
@@ -27,7 +27,7 @@ class SpeechRecognitionManager : SpeechRecognitionProtocol{
     var recognizerTask : SFSpeechRecognitionTask?
    
 
-    func configureAudioEngine(textField : UITextField, button : UIButton){
+    func configureAudioEngine(textField : UITextField?, button : UIButton, textView : UITextView?){
          
          
          //Configure Indicator
@@ -74,6 +74,9 @@ class SpeechRecognitionManager : SpeechRecognitionProtocol{
         
         let node = audioEngine.inputNode
         let recordingFormat = node.outputFormat(forBus: 0)
+            
+        
+     
         node.installTap(onBus: 0, bufferSize: .max, format:recordingFormat){ buffer, _ in
             
             self.request.append(buffer)
@@ -98,7 +101,15 @@ class SpeechRecognitionManager : SpeechRecognitionProtocol{
             
             if let result = result{
                 
-                textField.text = result.bestTranscription.formattedString
+                
+                if let textField = textField {
+                    textField.text = result.bestTranscription.formattedString
+
+                }else{
+                    textView?.text = result.bestTranscription.formattedString
+                }
+                
+                
                 
                 isFinal = result.isFinal
                 
