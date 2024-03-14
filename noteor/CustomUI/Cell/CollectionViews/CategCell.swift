@@ -33,8 +33,10 @@ class CategCell: UICollectionViewCell {
         
         let imageView = UIImageView(image: UIImage(named:image))
         let plus = UIImageView(image: UIImage(named: "plus"))
+        let categText = EATitle(textAlignment: .center, fontSize: 12)
         addSubview(imageView)
         addSubview(plus)
+        addSubview(categText)
         imageView.translatesAutoresizingMaskIntoConstraints = false
         plus.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
@@ -53,7 +55,16 @@ class CategCell: UICollectionViewCell {
             plus.heightAnchor.constraint(equalToConstant: 20),
 
         ])
+        NSLayoutConstraint.activate([
         
+            categText.topAnchor.constraint(equalTo: imageView.bottomAnchor, constant: 5),
+            categText.centerXAnchor.constraint(equalTo: imageView.centerXAnchor),
+            categText.widthAnchor.constraint(equalToConstant: 100),
+            categText.heightAnchor.constraint(equalToConstant: 16)
+            
+        ])
+        
+        categText.text = image
         backgroundColor = UIColor(named: image)
         
         

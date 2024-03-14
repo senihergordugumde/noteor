@@ -851,6 +851,8 @@ class AddItemVC: UIViewController,UIPickerViewDelegate,UIPickerViewDataSource, U
             makeEAAlert(alertTitle: "This note hasnt been created", alertLabel: "You should create a note for this feature 😊")
             return
         }
+        
+        
         let firestore = Firestore.firestore()
         
         do{

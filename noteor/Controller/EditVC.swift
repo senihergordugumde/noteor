@@ -9,10 +9,10 @@ import UIKit
 
 class EditVC: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource {
    
-    let colorList = ["Pink","Gym","Food","Work","Yellow","Purple"]
+    let colorList = ["Pink","Gym","Food","Work","School","Purple"]
     let customTitle = EATitle(textAlignment: .left, fontSize: 16)
     let colorView = UIView()
-    static var selectedColor = "Gym"
+    static var selectedColor = "Work"
     static var lock = false
     var collectionView : UICollectionView!
     

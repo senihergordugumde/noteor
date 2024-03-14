@@ -21,6 +21,7 @@ class TaskCell: UICollectionViewCell {
     let categImage = UIImageView(image: UIImage(named: "food"))
     let titleImage = UIImageView(image: UIImage(named: "titleTag"))
     let descrImage = UIImageView(image: UIImage(named: "description"))
+    let categText = EATitle(textAlignment: .center, fontSize: 16)
     static let id = "TaskCell"
     
     
@@ -113,13 +114,24 @@ class TaskCell: UICollectionViewCell {
         //MARK: - Categ
         
         colorView.addSubview(categImage)
+        colorView.addSubview(categText)
         categImage.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
         
-            categImage.centerYAnchor.constraint(equalTo: colorView.centerYAnchor),
+            categImage.centerYAnchor.constraint(equalTo: colorView.centerYAnchor, constant: -21),
             categImage.leadingAnchor.constraint(equalTo: colorView.leadingAnchor, constant: 20),
             categImage.widthAnchor.constraint(equalToConstant: 75),
             categImage.heightAnchor.constraint(equalToConstant: 75)
+        ])
+        
+        NSLayoutConstraint.activate([
+        
+        
+            categText.centerXAnchor.constraint(equalTo: categImage.centerXAnchor),
+            categText.topAnchor.constraint(equalTo: categImage.bottomAnchor, constant: 5),
+            categText.widthAnchor.constraint(equalToConstant: 100),
+            categText.heightAnchor.constraint(equalToConstant: 20)
+        
         ])
         
         //MARK: - Label
@@ -129,7 +141,7 @@ class TaskCell: UICollectionViewCell {
         NSLayoutConstraint.activate([
             
             
-            descrImage.topAnchor.constraint(equalTo: titleImage.bottomAnchor, constant: 5),
+            descrImage.bottomAnchor.constraint(equalTo: categText.bottomAnchor),
            
             descrImage.centerXAnchor.constraint(equalTo: titleImage.centerXAnchor),
             descrImage.widthAnchor.constraint(equalToConstant: 31),
@@ -182,7 +194,7 @@ class TaskCell: UICollectionViewCell {
         
             statusButton.topAnchor.constraint(equalTo: colorView.bottomAnchor, constant: -35),
             statusButton.trailingAnchor.constraint(equalTo: colorView.trailingAnchor, constant: -20),
-            statusButton.widthAnchor.constraint(equalToConstant: 70),
+            statusButton.widthAnchor.constraint(equalToConstant: 65),
             statusButton.bottomAnchor.constraint(equalTo: bottomAnchor)
 
         ])
@@ -254,7 +266,7 @@ class TaskCell: UICollectionViewCell {
         time.date = note.StartDate
         colorView.backgroundColor = UIColor(named: note.Color)
         categImage.image = UIImage(named: note.Categ)
-        
+        categText.text = note.Categ
         
         if note.isCompleted == "doing"{
             statusButton.setImage(UIImage(named: "Doing"), for: .normal)

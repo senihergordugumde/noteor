@@ -127,7 +127,7 @@ class NotesVC: UIViewController, UICollectionViewDelegate, UICollectionViewDataS
         imageView.image = UIImage(named: "mag")!.resized(toWidth: 36)
         
         filterField.leftView = imageView
-        filterField.backgroundColor = .systemGray6
+        filterField.backgroundColor = .secondarySystemBackground
         filterField.layer.borderWidth = 0
         filterField.delegate = self
         
@@ -288,11 +288,11 @@ class NotesVC: UIViewController, UICollectionViewDelegate, UICollectionViewDataS
             cell.action = {
                 
                 if self.filteredNotes[indexPath.row].isCompleted == "done"{
-                    cell.statusButton.setImage(UIImage(named: "Dont"), for: .normal)
-                    self.filteredNotes[indexPath.row].isCompleted = "dont"
+                    cell.statusButton.setImage(UIImage(named: "Doing"), for: .normal)
+                    self.filteredNotes[indexPath.row].isCompleted = "doing"
                 }
                 
-                if self.filteredNotes[indexPath.row].isCompleted == "dont"{
+                if self.filteredNotes[indexPath.row].isCompleted == "doing"{
                     cell.statusButton.setImage(UIImage(named: "Done"), for: .normal)
                     self.filteredNotes[indexPath.row].isCompleted = "done"
                 }else{
@@ -308,15 +308,15 @@ class NotesVC: UIViewController, UICollectionViewDelegate, UICollectionViewDataS
             cell.action = {
                 
                 if self.notes[indexPath.row].isCompleted == "done"{
-                    cell.statusButton.setImage(UIImage(named: "Dont"), for: .normal)
-                    self.notes[indexPath.row].isCompleted = "dont"
+                    cell.statusButton.setImage(UIImage(named: "Doing"), for: .normal)
+                    self.notes[indexPath.row].isCompleted = "doing"
                     
                     self.updateData(id: self.notes[indexPath.row].id!, data: ["isCompleted" : self.notes[indexPath.row].isCompleted ])
                     
                     self.collectionView.reloadData()
                 }
                 
-                else if self.notes[indexPath.row].isCompleted == "dont"{
+                else if self.notes[indexPath.row].isCompleted == "doing"{
                     cell.statusButton.setImage(UIImage(named: "Done"), for: .normal)
                     self.notes[indexPath.row].isCompleted = "done"
                     self.updateData(id: self.notes[indexPath.row].id!, data: ["isCompleted" : self.notes[indexPath.row].isCompleted ])

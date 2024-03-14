@@ -17,7 +17,7 @@ class HomeVC: UIViewController, UICollectionViewDelegate, UICollectionViewDataSo
     
    
     
-    var categories = ["Work", "Food", "Gym"]
+    var categories = ["Work", "Food", "Gym", "School"]
     var notes : [Notes]?
     
     override func viewDidLoad() {
@@ -59,7 +59,7 @@ class HomeVC: UIViewController, UICollectionViewDelegate, UICollectionViewDataSo
         
         
      
-        categoriesText.text = "Categories"
+        categoriesText.text = "Add New Task 🤙"
   
         view.addSubview(colTableBack)
         colTableBack.addSubview(categoriesText)
@@ -80,7 +80,7 @@ class HomeVC: UIViewController, UICollectionViewDelegate, UICollectionViewDataSo
         
             categoriesText.topAnchor.constraint(equalTo: topView.bottomAnchor, constant: 20),
             categoriesText.leadingAnchor.constraint(equalTo: colTableBack.leadingAnchor, constant: 20),
-            categoriesText.widthAnchor.constraint(equalToConstant: 100),
+            categoriesText.widthAnchor.constraint(equalToConstant: 200),
             categoriesText.heightAnchor.constraint(equalToConstant: 24)
         
         ])
@@ -176,6 +176,15 @@ class HomeVC: UIViewController, UICollectionViewDelegate, UICollectionViewDataSo
         cell.set(categ: categories[indexPath.row])
         
         return cell
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        
+        let destinationVC = AddItemVC()
+        destinationVC.selectedCateg = categories[indexPath.row]
+        
+        self.navigationController?.pushViewController(destinationVC, animated: true)
+        
     }
     
     //MARK: - Today's Task Text
