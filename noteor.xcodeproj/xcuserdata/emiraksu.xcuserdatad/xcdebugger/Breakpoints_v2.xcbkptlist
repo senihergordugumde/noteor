@@ -148,5 +148,98 @@
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "5CB05C5A-25E9-42F0-97B0-B6AEB6DD8530"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "noteor/Controller/AddItemVC.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "564"
+            endingLineNumber = "564"
+            landmarkName = "AddItemVC"
+            landmarkType = "3">
+            <Locations>
+               <Location
+                  uuid = "5CB05C5A-25E9-42F0-97B0-B6AEB6DD8530 - 5d50463e60cb58c9"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "noteor.AddItemVC.init(nibName: Swift.Optional&lt;Swift.String&gt;, bundle: Swift.Optional&lt;__C.NSBundle&gt;) -&gt; noteor.AddItemVC"
+                  moduleName = "noteor"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/emiraksu/Documents/noteor/noteor/Controller/AddItemVC.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "548"
+                  endingLineNumber = "548"
+                  offsetFromSymbolStart = "1444">
+               </Location>
+               <Location
+                  uuid = "5CB05C5A-25E9-42F0-97B0-B6AEB6DD8530 - c4eec82c69cd185a"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "noteor.AddItemVC.init(coder: __C.NSCoder) -&gt; Swift.Optional&lt;noteor.AddItemVC&gt;"
+                  moduleName = "noteor"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/emiraksu/Documents/noteor/noteor/Controller/AddItemVC.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "548"
+                  endingLineNumber = "548"
+                  offsetFromSymbolStart = "1420">
+               </Location>
+               <Location
+                  uuid = "5CB05C5A-25E9-42F0-97B0-B6AEB6DD8530 - 68ccda4f6e429299"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "noteor.AddItemVC.image.getter : __C.UIImageView"
+                  moduleName = "noteor"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/emiraksu/Documents/noteor/noteor/Controller/AddItemVC.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "547"
+                  endingLineNumber = "547"
+                  offsetFromSymbolStart = "0">
+               </Location>
+               <Location
+                  uuid = "5CB05C5A-25E9-42F0-97B0-B6AEB6DD8530 - 5d50463e60cb58e8"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "noteor.AddItemVC.init(nibName: Swift.Optional&lt;Swift.String&gt;, bundle: Swift.Optional&lt;__C.NSBundle&gt;) -&gt; noteor.AddItemVC"
+                  moduleName = "noteor"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/emiraksu/Documents/noteor/noteor/Controller/AddItemVC.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "547"
+                  endingLineNumber = "547"
+                  offsetFromSymbolStart = "1436">
+               </Location>
+               <Location
+                  uuid = "5CB05C5A-25E9-42F0-97B0-B6AEB6DD8530 - c4eec82c69cd187b"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "noteor.AddItemVC.init(coder: __C.NSCoder) -&gt; Swift.Optional&lt;noteor.AddItemVC&gt;"
+                  moduleName = "noteor"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/emiraksu/Documents/noteor/noteor/Controller/AddItemVC.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "547"
+                  endingLineNumber = "547"
+                  offsetFromSymbolStart = "1412">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
    </Breakpoints>
 </Bucket>

@@ -10,30 +10,16 @@ import FirebaseFirestore
 import FirebaseAuth
 import Speech
 
-class AddItemVC: UIViewController,UIPickerViewDelegate,UIPickerViewDataSource, UITableViewDataSource, UITableViewDelegate, UITextFieldDelegate, SFSpeechRecognizerDelegate{
-  
+class AddItemVC: UIViewController, UITableViewDataSource, UITableViewDelegate, UITextFieldDelegate, SFSpeechRecognizerDelegate{
     
+    
+    //TO MVVM
     let noteCategories = ["Work","Food","Gym"]
     var selectedCateg : String?
-    
-    
-    
     var note : Notes?
-  
-    let pickerView = UIPickerView()
-    
     let speechRec = SpeechRecognitionManager()
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+  
     //MARK: - Life Cycle
     
     
@@ -56,12 +42,34 @@ class AddItemVC: UIViewController,UIPickerViewDelegate,UIPickerViewDataSource, U
                     }
                 }
         
-        configure()
+        configureUI()
         setData()
-        
+        dismissKeyboardOnTouch()
       
 
     }
+    
+    //MARK: - Configure UI
+    private func configureUI(){
+       
+        
+        view.backgroundColor = .systemBackground
+        
+        
+        
+        configureNavigationBar()
+        configureBackground(view: mainView)
+        configureScrollView()
+        configureTitleInput()
+        configureTaskAdd()
+        configureNoteInput()
+        //configureStartDate()
+        //configureEndDate()
+        //configureStartTime()
+        //configureEndTime()
+   
+    }
+    
     
     //MARK: - Background Configure
     private func configureAddItemsBackground(){
@@ -125,8 +133,13 @@ class AddItemVC: UIViewController,UIPickerViewDelegate,UIPickerViewDataSource, U
     }
     
     
-    //MARK: - Configure UI
-    private func configure(){
+   
+    
+    
+    
+    //MARK: -  NavigationBar
+
+    private func configureNavigationBar(){
         let saveButton =  UIBarButtonItem(image: UIImage(systemName: "checkmark"), style: .done, target: self, action:  #selector(saveClicked))
         
         let editButton =  UIBarButtonItem(image: UIImage(systemName: "pencil"), style: .done, target: self, action:  #selector(editClicked))
@@ -137,32 +150,29 @@ class AddItemVC: UIViewController,UIPickerViewDelegate,UIPickerViewDataSource, U
         self.navigationController?.navigationBar.prefersLargeTitles = true
         self.navigationItem.title = "Add Note"
         
-        view.backgroundColor = .systemBackground
-        
-  
         
         self.navigationItem.rightBarButtonItems = topRightButtons
         self.navigationController?.isNavigationBarHidden = false
        
         self.navigationController?.navigationBar.backgroundColor = .clear
         self.navigationItem.leftBarButtonItem = UIBarButtonItem(image: UIImage(named: "arrow-left")!.resized(toWidth: 40), style: .done, target: self, action: #selector(backButton))
-        configureBackground(view: mainView)
-        configureTitleInput()
-        configureTodoAdd()
-        configureNoteInput()
-        //configurePickerView()
-        configureScrollView()
-        configureStartDate()
-        configureEndDate()
-        configureStartTime()
-        configureEndTime()
     }
+    
     
     @objc func backButton(){
         self.navigationController?.popToRootViewController(animated: true)
     }
     
-    
+    //MARK: - MainView
+    public let mainView : UIView = {
+     
+        let view = UIView()
+        
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.heightAnchor.constraint(equalToConstant: 1000).isActive = true
+        return view
+        
+    }()
     
     //MARK: - Scrollview
     private let scrollView : UIScrollView = {
@@ -171,6 +181,8 @@ class AddItemVC: UIViewController,UIPickerViewDelegate,UIPickerViewDataSource, U
         view.translatesAutoresizingMaskIntoConstraints = false
         
         return view
+       
+        
         
     }()
     
@@ -201,19 +213,9 @@ class AddItemVC: UIViewController,UIPickerViewDelegate,UIPickerViewDataSource, U
         
     }
     
-    //MARK: - MainView
-    private let mainView : UIView = {
-     
-        let view = UIView()
-        
-        view.translatesAutoresizingMaskIntoConstraints = false
-        view.heightAnchor.constraint(equalToConstant: 1000).isActive = true
-        return view
-        
-    }()
-    
+ 
     //MARK: - SetDATA
-
+    //TO MVVM
     private func setData(){
         guard let note = note else {return}
         
@@ -235,365 +237,341 @@ class AddItemVC: UIViewController,UIPickerViewDelegate,UIPickerViewDataSource, U
         }
     
     }
-    //MARK: - PickerView
-
-    func numberOfComponents(in pickerView: UIPickerView) -> Int {
-        return 1
-    }
-    
-    func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
-        return noteCategories.count
-    }
-    func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
-        noteCategories[row]
-    }
-    
-    func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
-        self.selectedCateg = noteCategories[row]
-    }
-    
-    
-    
-    private func configurePickerView(){
-        
-    
-        mainView.addSubview(pickerView)
-        
-        pickerView.delegate = self
-        pickerView.dataSource = self
-        
-        pickerView.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            
-            pickerView.trailingAnchor.constraint(equalTo: noteInput.trailingAnchor),
-            pickerView.topAnchor.constraint(equalTo: noteInput.bottomAnchor, constant: 20),
-            pickerView.leadingAnchor.constraint(equalTo: noteInput.leadingAnchor, constant: 100),
-            pickerView.heightAnchor.constraint(equalToConstant: 60)
-        
-        ])
-        
-        guard let selectedCateg = selectedCateg else { return }
-        
-        
-        
-    }
     
   
     
-    //MARK: - TitleInput
-    let titleText = EATitle(textAlignment: .left, fontSize: 24)
-    let titleInput = EATextField(placeholder: "Notes Title", isSecureTextEntry: false, textAlignment: .center)
+    //MARK: - Set Title Input
     private func configureTitleInput(){
-        titleText.text = "Task Title*"
-        mainView.addSubview(titleText)
-        mainView.addSubview(titleInput)
-        mainView.addSubview(titleSpeechButton)
-
-        NSLayoutConstraint.activate([
-            
-            titleText.bottomAnchor.constraint(equalTo: titleInput.topAnchor, constant: -20),
-            titleText.leadingAnchor.constraint(equalTo: titleInput.leadingAnchor),
-            titleText.heightAnchor.constraint(equalToConstant: 30),
-            titleText.widthAnchor.constraint(equalToConstant: 200)
-        
-        ])
-        
-        let titleLogo = UIImageView(frame: CGRectMake(10, 0, 20, 20))
-        titleLogo.image = UIImage(named: "titleTag")?.resized(toWidth: 100)
-        
-      
-
-        titleInput.backgroundColor = .systemGray6
-        titleInput.leftViewMode = .always
-        titleInput.leftView = titleLogo
-        titleInput.layer.borderWidth = 0
-        NSLayoutConstraint.activate([
-            
-            titleInput.topAnchor.constraint(equalTo: mainView.safeAreaLayoutGuide.topAnchor, constant: 80),
-            
-            titleInput.leadingAnchor.constraint(equalTo: mainView.leadingAnchor, constant: 20),
-            titleInput.trailingAnchor.constraint(equalTo: titleSpeechButton.leadingAnchor, constant: -20),
-            titleInput.heightAnchor.constraint(equalToConstant: 50)
-            
-            
-        ])
-        
-        
-        //Speech Button Config
-        titleSpeechButton.setImage(UIImage(named: "mic"), for: .normal)
-        NSLayoutConstraint.activate([
-        
-            titleSpeechButton.topAnchor.constraint(equalTo: mainView.safeAreaLayoutGuide.topAnchor, constant: 80),
-            titleSpeechButton.trailingAnchor.constraint(equalTo: mainView.trailingAnchor, constant: -20),
-            titleSpeechButton.widthAnchor.constraint(equalToConstant: 50),
-            titleSpeechButton.heightAnchor.constraint(equalToConstant: 50)
-        
-        
-        ])
-        
-        
-        
-        titleSpeechButton.addTarget(self, action: #selector(titleSpeechButtonClicked), for: .touchUpInside)
+        configureTitleSpeechButton()
+        configureTitleField()
+        configureTitleText()
+       
        
     }
-     
-    
-    //MARK: - SpeechConfig
-    let titleSpeechButton = EAButton(title: " ", backgroundColor: .clear, cornerRadius: 15)
-    @objc func titleSpeechButtonClicked(){
-      
-        speechRec.configureAudioEngine(textField: titleInput, button: titleSpeechButton, textView: nil)
-        
-    }
-    
-    let descrSpeechButton = EAButton(title: " ", backgroundColor: .clear, cornerRadius: 15)
     
     
-    //MARK: - Todo Add
-    
-    let tableView = UITableView()
+                //MARK: - Configure Title Text
 
-    var tableViewHeight : NSLayoutConstraint?
-    var toDoList = [tasks]()
-    
-    let addButton = EAButton(title: "", backgroundColor: .clear, cornerRadius: 0)
-    
-    let todoTextField = EATextField(placeholder: "Enter Your Task 🥹", isSecureTextEntry: false, textAlignment: .center)
-    
-    //ToDo TableView
-    private func configureTableView(){
-        
+                let titleText = EATitle(textAlignment: .left, fontSize: 24)
+                private func configureTitleText(){
+                    titleText.text = "Task Title*"
+                    mainView.addSubview(titleText)
+                    
+                    
+                    NSLayoutConstraint.activate([
+                        
+                        titleText.bottomAnchor.constraint(equalTo: titleInput.topAnchor, constant: -20),
+                        titleText.leadingAnchor.constraint(equalTo: titleInput.leadingAnchor),
+                        titleText.heightAnchor.constraint(equalToConstant: 30),
+                        titleText.widthAnchor.constraint(equalToConstant: 200)
+                    
+                    ])
+                }
+                //MARK: - Configure Title Field
 
-        tableView.translatesAutoresizingMaskIntoConstraints = false
-        tableView.delegate = self
-        tableView.dataSource = self
-        tableView.backgroundColor = .white
-        tableView.register(toDoCell.self, forCellReuseIdentifier: toDoCell.id)
-        
-        mainView.addSubview(tableView)
-        NSLayoutConstraint.activate([
-        
-            tableView.topAnchor.constraint(equalTo: todoTextField.bottomAnchor, constant: 20),
-            
-            tableView.leadingAnchor.constraint(equalTo: todoTextField.leadingAnchor),
-            tableView.trailingAnchor.constraint(equalTo: todoTextField.trailingAnchor),
-            
-        ])
-        
-        tableViewHeight = tableView.heightAnchor.constraint(equalToConstant: 0)
-        
-        tableViewHeight?.isActive = true
-    }
-    
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 50
-    }
-    
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        toDoList.count
-    }
-    
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: toDoCell.id, for: indexPath) as! toDoCell
-        
-        cell.set(task: toDoList[indexPath.row])
-        
-        cell.action = {
-            
-            if self.toDoList[indexPath.row].taskStatus {
-                self.toDoList[indexPath.row].taskStatus = false
-                
-                DispatchQueue.main.async {
-                    cell.deleteButton.setImage(UIImage(named: "closeDetail"), for: .normal)
+                let titleInput = EATextField(placeholder: "Notes Title", isSecureTextEntry: false, textAlignment: .center)
+                private func configureTitleField(){
+                    mainView.addSubview(titleInput)
+                    
+                    let titleLogo = UIImageView(frame: CGRectMake(10, 0, 20, 20))
+                    titleLogo.image = UIImage(named: "titleTag")?.resized(toWidth: 100)
+                    
+                    titleInput.backgroundColor = .systemGray6
+                    titleInput.leftViewMode = .always
+                    titleInput.leftView = titleLogo
+                    titleInput.layer.borderWidth = 0
+                    NSLayoutConstraint.activate([
+                        
+                        titleInput.topAnchor.constraint(equalTo: mainView.safeAreaLayoutGuide.topAnchor, constant: 80),
+                        
+                        titleInput.leadingAnchor.constraint(equalTo: mainView.leadingAnchor, constant: 20),
+                        titleInput.trailingAnchor.constraint(equalTo: titleSpeechButton.leadingAnchor, constant: -20),
+                        titleInput.heightAnchor.constraint(equalToConstant: 50)
+                        
+                        
+                    ])
 
                 }
-
-            }
-            
-            else {
-                self.toDoList[indexPath.row].taskStatus = true
-                
-                DispatchQueue.main.async {
-                    cell.deleteButton.setImage(UIImage(named: "checkDetail"), for: .normal)
-
+                //MARK: - Configure Title Speech Button
+                let titleSpeechButton = EAButton(title: " ", backgroundColor: .clear, cornerRadius: 15)
+                private func configureTitleSpeechButton(){
+                    mainView.addSubview(titleSpeechButton)
+                    
+                    //Speech Button Config
+                    titleSpeechButton.setImage(UIImage(named: "mic"), for: .normal)
+                    NSLayoutConstraint.activate([
+                    
+                        titleSpeechButton.topAnchor.constraint(equalTo: mainView.safeAreaLayoutGuide.topAnchor, constant: 80),
+                        titleSpeechButton.trailingAnchor.constraint(equalTo: mainView.trailingAnchor, constant: -20),
+                        titleSpeechButton.widthAnchor.constraint(equalToConstant: 50),
+                        titleSpeechButton.heightAnchor.constraint(equalToConstant: 50)
+                    
+                    
+                    ])
+                    
+                    
+                    
+                    titleSpeechButton.addTarget(self, action: #selector(titleSpeechButtonClicked), for: .touchUpInside)
                 }
 
+             
+                @objc func titleSpeechButtonClicked(){
+                  
+                    speechRec.configureAudioEngine(textField: titleInput, button: titleSpeechButton, textView: nil)
+                    
+                }
+    
+    
+    
+    //MARK: - Set Task Add
 
-            }
-
-        }
-        
-        
-        return cell
-    }
-    
-  
-    
-    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
-        
-        
-        
-        if editingStyle == .delete{
-            
-            
-            
-            self.toDoList.remove(at: indexPath.row)
-            
-            tableView.deleteRows(at: [indexPath], with: .fade)
-            
-            self.tableViewHeight?.constant = CGFloat(50 * self.toDoList.count)
-            UIView.animate(withDuration: 1.0) {
-                
-                self.mainView.layoutIfNeeded()
-                
-    
-            
-            }
-            
-            
-            
-        }
-        self.tableView.reloadData()
-    }
-    
-    
-    let taskAddText = EATitle(textAlignment: .left, fontSize: 24)
-
-    private func configureTodoAdd(){
-        //MARK: - Configure Todo Add
-        taskAddText.text = "Task Add"
-        addButton.setImage(UIImage(named: "add"), for: .normal)
-        
-        mainView.addSubview(addButton)
-        mainView.addSubview(todoTextField)
-        mainView.addSubview(taskAddText)
-        
-        NSLayoutConstraint.activate([
-            
-            taskAddText.leadingAnchor.constraint(equalTo: titleInput.leadingAnchor),
-            taskAddText.topAnchor.constraint(equalTo: titleInput.bottomAnchor, constant: 20),
-            taskAddText.heightAnchor.constraint(equalToConstant: 28),
-            taskAddText.widthAnchor.constraint(equalToConstant: 200),
-        
-            addButton.topAnchor.constraint(equalTo: taskAddText.bottomAnchor, constant: 20),
-            addButton.leadingAnchor.constraint(equalTo: titleInput.leadingAnchor),
-            addButton.widthAnchor.constraint(equalToConstant: 60),
-            addButton.heightAnchor.constraint(equalToConstant: 60)
-        
-        
-        ])
-        
-        addButton.addTarget(self, action: #selector(todoAddClicked), for: .touchUpInside)
-        
-        NSLayoutConstraint.activate([
-        
-            todoTextField.topAnchor.constraint(equalTo: addButton.topAnchor),
-            todoTextField.trailingAnchor.constraint(equalTo: titleSpeechButton.trailingAnchor),
-            todoTextField.leadingAnchor.constraint(equalTo: addButton.trailingAnchor, constant: 20),
-            todoTextField.heightAnchor.constraint(equalToConstant: 40)
-        
-        
-        ])
-        
-        todoTextField.backgroundColor = .systemGray6
-        todoTextField.leftViewMode = .always
-        todoTextField.layer.borderWidth = 0
-        
-     
+    private func configureTaskAdd(){
+        configureTaskText()
+        configureTaskAddButton()
+        configureTaskTextField()
         configureTableView()
-        
-    }
-
-    
-    @objc func todoAddClicked(){
-        //MARK: - Todo Add Clicked
-
-        if let todo = todoTextField.text, !todo.isEmpty {
-            
-            toDoList.append(tasks(taskName: todo, taskStatus: false))
-            
-            
-            DispatchQueue.main.async {
-      
-                self.tableViewHeight?.constant = CGFloat(50 * self.toDoList.count)
-                UIView.animate(withDuration: 1.0) {
-                    
-                    self.mainView.layoutIfNeeded()
-                    
-                    self.todoTextField.text = ""
-                }
-                
-                self.tableView.reloadData()
-
-            }
-                
-            
-        }else{
-            makeEAAlert(alertTitle: "Text Is Empty", alertLabel: "Task Text Cannot Be Empty 🥲")
-        }
     }
     
+                    //MARK: - Task Add Button
+                    let addButton = EAButton(title: "", backgroundColor: .clear, cornerRadius: 0)
+
+                    private func configureTaskAddButton(){
+                        addButton.setImage(UIImage(named: "add"), for: .normal)
+                        
+                        mainView.addSubview(addButton)
+                        NSLayoutConstraint.activate([
+                            
+                          
+                            addButton.topAnchor.constraint(equalTo: taskAddText.bottomAnchor, constant: 20),
+                            addButton.leadingAnchor.constraint(equalTo: titleInput.leadingAnchor),
+                            addButton.widthAnchor.constraint(equalToConstant: 60),
+                            addButton.heightAnchor.constraint(equalToConstant: 60)
+                        
+                        
+                        ])
+                        
+                        addButton.addTarget(self, action: #selector(todoAddClicked), for: .touchUpInside)
+
+                    }
+                    
+                    
+                    //MARK: - Task Text Field
+                    let taskTextField = EATextField(placeholder: "Enter Your Task 🥹", isSecureTextEntry: false, textAlignment: .center)
+                    private func configureTaskTextField(){
+                        mainView.addSubview(taskTextField)
+                        
+                        NSLayoutConstraint.activate([
+                        
+                            taskTextField.topAnchor.constraint(equalTo: addButton.topAnchor),
+                            taskTextField.trailingAnchor.constraint(equalTo: titleSpeechButton.trailingAnchor),
+                            taskTextField.leadingAnchor.constraint(equalTo: addButton.trailingAnchor, constant: 20),
+                            taskTextField.heightAnchor.constraint(equalToConstant: 40)
+                        
+                        
+                        ])
+                        
+                        taskTextField.backgroundColor = .systemGray6
+                        taskTextField.leftViewMode = .always
+                        taskTextField.layer.borderWidth = 0
+                    }
+                    
+                    //MARK: - Task Text
+                    let taskAddText = EATitle(textAlignment: .left, fontSize: 24)
+
+                    private func configureTaskText(){
+                     
+                        taskAddText.text = "Task Add"
+                      
+                        
+                        mainView.addSubview(taskAddText)
+                        
+                        NSLayoutConstraint.activate([
+                            
+                            taskAddText.leadingAnchor.constraint(equalTo: titleInput.leadingAnchor),
+                            taskAddText.topAnchor.constraint(equalTo: titleInput.bottomAnchor, constant: 20),
+                            taskAddText.heightAnchor.constraint(equalToConstant: 28),
+                            taskAddText.widthAnchor.constraint(equalToConstant: 200),
+                       
+                        
+                        ])
+                        
+
+                    }
+
+                    //MARK: - Todo Add Clicked
+
+                    @objc func todoAddClicked(){
+                        //TO MVVM
+
+                        if let todo = taskTextField.text, !todo.isEmpty {
+                            
+                            toDoList.append(tasks(taskName: todo, taskStatus: false))
+                            
+                            
+                            DispatchQueue.main.async {
+                      
+                                self.tableViewHeight?.constant = CGFloat(50 * self.toDoList.count)
+                                UIView.animate(withDuration: 1.0) {
+                                    
+                                    self.mainView.layoutIfNeeded()
+                                    
+                                    self.taskTextField.text = ""
+                                }
+                                
+                                self.tableView.reloadData()
+
+                            }
+                                
+                            
+                        }else{
+                            makeEAAlert(alertTitle: "Text Is Empty", alertLabel: "Task Text Cannot Be Empty 🥲")
+                        }
+                    }
+                    
+                    
+                    //MARK: - Todo Add
+                    
+                    let tableView = UITableView()
+
+                    var tableViewHeight : NSLayoutConstraint?
+                    var toDoList = [tasks]()
+                    
+                  
+                    
+                    //MARK: - Task TableView
+                    private func configureTableView(){
+                        
+
+                        tableView.translatesAutoresizingMaskIntoConstraints = false
+                        tableView.delegate = self
+                        tableView.dataSource = self
+                        tableView.backgroundColor = .white
+                        tableView.register(toDoCell.self, forCellReuseIdentifier: toDoCell.id)
+                        
+                        mainView.addSubview(tableView)
+                        NSLayoutConstraint.activate([
+                        
+                            tableView.topAnchor.constraint(equalTo: taskTextField.bottomAnchor, constant: 20),
+                            
+                            tableView.leadingAnchor.constraint(equalTo: taskTextField.leadingAnchor),
+                            tableView.trailingAnchor.constraint(equalTo: taskTextField.trailingAnchor),
+                            
+                        ])
+                        
+                        tableViewHeight = tableView.heightAnchor.constraint(equalToConstant: 0)
+                        
+                        tableViewHeight?.isActive = true
+                    }
+                    
+                   
+              
     
-        
-    //MARK: - NoteInput
-    let noteInput = EATextView(placeholder: "")
-    let descrText = EATitle(textAlignment: .left, fontSize: 24)
-    let image = UIImageView(image: UIImage(named: "description"))
     
+    //MARK: - Configure Note Input
+
     private func configureNoteInput(){
-        descrText.text = "Description"
+        noteInputText()
+        noteInputImage()
+        noteInputSpeech()
+        noteInputField()
+    
+       
         
-        mainView.addSubview(noteInput)
-        mainView.addSubview(image)
-        mainView.addSubview(descrText)
-        mainView.addSubview(descrSpeechButton)
-
-        image.translatesAutoresizingMaskIntoConstraints = false
-        noteInput.backgroundColor = .systemGray6
-        noteInput.layer.borderWidth = 0
-        NSLayoutConstraint.activate([
-            
-            descrText.leadingAnchor.constraint(equalTo: image.leadingAnchor),
-            descrText.topAnchor.constraint(equalTo: tableView.bottomAnchor, constant: 20),
-            descrText.heightAnchor.constraint(equalToConstant: 28),
-            descrText.widthAnchor.constraint(equalToConstant: 200),
-            
-            
-            noteInput.topAnchor.constraint(equalTo: descrText.bottomAnchor, constant: 20),
-            noteInput.leadingAnchor.constraint(equalTo: titleInput.leadingAnchor,constant: 50),
-            noteInput.trailingAnchor.constraint(equalTo: descrSpeechButton.leadingAnchor, constant: -20),
-            noteInput.heightAnchor.constraint(equalToConstant: 200),
-            
-            image.topAnchor.constraint(equalTo: noteInput.topAnchor),
-            image.leadingAnchor.constraint(equalTo: titleInput.leadingAnchor),
-            image.widthAnchor.constraint(equalToConstant: 35),
-            image.heightAnchor.constraint(equalToConstant: 35)
-            
-            
-            
-        ])
+      
         
-        //Speech Button Config
-        descrSpeechButton.setImage(UIImage(named: "mic"), for: .normal)
-        NSLayoutConstraint.activate([
-        
-            descrSpeechButton.topAnchor.constraint(equalTo: noteInput.topAnchor),
-            descrSpeechButton.trailingAnchor.constraint(equalTo: mainView.trailingAnchor, constant: -20),
-            descrSpeechButton.widthAnchor.constraint(equalToConstant: 50),
-            descrSpeechButton.heightAnchor.constraint(equalToConstant: 50)
-        
-        
-        ])
-        
-        
-        
-        descrSpeechButton.addTarget(self, action: #selector(descrSpeechButtonClicked), for: .touchUpInside)
-        
+     
     }
     
-    @objc func descrSpeechButtonClicked(){
-        self.speechRec.configureAudioEngine(textField: nil, button: descrSpeechButton, textView: noteInput)
-    }
+                        //MARK: - Note Input Text
+                        let descrText = EATitle(textAlignment: .left, fontSize: 24)
+
+                        private func noteInputText(){
+                            mainView.addSubview(descrText)
+                            descrText.text = "Description"
+                            NSLayoutConstraint.activate([
+                            
+                                descrText.leadingAnchor.constraint(equalTo: titleInput.leadingAnchor),
+                                descrText.topAnchor.constraint(equalTo: tableView.bottomAnchor, constant: 20),
+                                descrText.heightAnchor.constraint(equalToConstant: 28),
+                                descrText.widthAnchor.constraint(equalToConstant: 200),
+                            ])
+
+                        }
+
+                        //MARK: - Note Input Image
+                        let image = UIImageView(image: UIImage(named: "description"))
+                        
+                        private func noteInputImage(){
+                            
+                            
+                            mainView.addSubview(image)
+
+                            image.translatesAutoresizingMaskIntoConstraints = false
+                            
+                            NSLayoutConstraint.activate([
+                              
+                                image.topAnchor.constraint(equalTo: descrText.bottomAnchor, constant: 5),
+                                image.leadingAnchor.constraint(equalTo: descrText.leadingAnchor),
+                                image.widthAnchor.constraint(equalToConstant: 35),
+                                image.heightAnchor.constraint(equalToConstant: 35)
+                         ])
+
+                        }
+
+    
+    
+                      //MARK: - Note Input Speech
+                      let descrSpeechButton = EAButton(title: " ", backgroundColor: .clear, cornerRadius: 15)
+
+                      private func noteInputSpeech(){
+                          mainView.addSubview(descrSpeechButton)
+                          descrSpeechButton.setImage(UIImage(named: "mic"), for: .normal)
+                          NSLayoutConstraint.activate([
+                          
+                              descrSpeechButton.topAnchor.constraint(equalTo: image.topAnchor),
+                              descrSpeechButton.trailingAnchor.constraint(equalTo: mainView.trailingAnchor, constant: -20),
+                              descrSpeechButton.widthAnchor.constraint(equalToConstant: 50),
+                              descrSpeechButton.heightAnchor.constraint(equalToConstant: 50)
+                          ])
+                          
+                          descrSpeechButton.addTarget(self, action: #selector(descrSpeechButtonClicked), for: .touchUpInside)
+
+                      }
+                      
+                      @objc func descrSpeechButtonClicked(){
+                          self.speechRec.configureAudioEngine(textField: nil, button: descrSpeechButton, textView: noteInput)
+                      }
+                      
+      
+    
+                        //MARK: - NoteInput
+                        let noteInput = EATextView(placeholder: "")
+                        private func noteInputField(){
+                            mainView.addSubview(noteInput)
+                            noteInput.backgroundColor = .systemGray6
+                            noteInput.layer.borderWidth = 0
+                            NSLayoutConstraint.activate([
+                                
+                            noteInput.topAnchor.constraint(equalTo: descrText.bottomAnchor, constant: 20),
+                            noteInput.leadingAnchor.constraint(equalTo: titleInput.leadingAnchor,constant: 50),
+                            noteInput.trailingAnchor.constraint(equalTo: descrSpeechButton.leadingAnchor, constant: -20),
+                            noteInput.heightAnchor.constraint(equalToConstant: 200),
+
+                        ])
+                        }
+
+
+    
+                      
+                       
+    
+                                          
+                                           
+                       
+                        
+                        
+                       
+  
     
     //MARK: - Start Date
     
@@ -808,7 +786,6 @@ class AddItemVC: UIViewController,UIPickerViewDelegate,UIPickerViewDataSource, U
         
     }
     
-    
     @objc func saveClicked(){
 
         guard titleInput.text != "" else {
@@ -869,15 +846,4 @@ class AddItemVC: UIViewController,UIPickerViewDelegate,UIPickerViewDataSource, U
         self.navigationController?.popViewController(animated: true)
         
     }
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
-    }
-    */
-
 }

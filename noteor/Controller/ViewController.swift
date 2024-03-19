@@ -7,17 +7,16 @@
 
 import UIKit
 import FirebaseAuth
+import GoogleSignIn
+import FirebaseCore
 class ViewController: UIViewController {
-    
-    let username = EATextField(placeholder: "Username", isSecureTextEntry: false, textAlignment: .center)
-    let password = EATextField(placeholder: "Password", isSecureTextEntry: true, textAlignment: .center)
-    let signIn = EAButton(title: "SignIn", backgroundColor: UIColor(named: "Yellow") ?? .systemYellow,cornerRadius: 35)
+
+    let signIn = GIDSignInButton()
     override func viewDidLoad() {
         super.viewDidLoad()
         
         view.backgroundColor = .systemBackground
-        configureUsername()
-        configurePassword()
+     
         configureSignIn()
         configureBackground(view: view)
     }
@@ -26,51 +25,20 @@ class ViewController: UIViewController {
     
     
     
-    private func configureUsername(){
-        
-        view.addSubview(username)
-        NSLayoutConstraint.activate([
-        
-            username.topAnchor.constraint(equalTo: view.topAnchor, constant: 300),
-            
-            username.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            username.widthAnchor.constraint(equalToConstant: 300),
-            username.heightAnchor.constraint(equalToConstant: 50)
-        
-        
-        ])
-        
-        
-    }
     
     
-    
-    private func configurePassword(){
-        
-        view.addSubview(password)
-        NSLayoutConstraint.activate([
-        
-            password.topAnchor.constraint(equalTo: username.bottomAnchor, constant: 50),
-            
-            password.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            password.widthAnchor.constraint(equalToConstant: 300),
-            password.heightAnchor.constraint(equalToConstant: 50)
-        
-        
-        ])
-        
-        
-    }
+   
     
     private func configureSignIn(){
         
         view.addSubview(signIn)
+        signIn.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
         
-            signIn.topAnchor.constraint(equalTo: password.bottomAnchor, constant: 50),
-            signIn.leadingAnchor.constraint(equalTo: password.leadingAnchor),
+            signIn.centerXAnchor.constraint(equalTo: view.centerXAnchor) ,
+            signIn.centerYAnchor.constraint(equalTo: view.centerYAnchor),
             
-            signIn.widthAnchor.constraint(equalToConstant: 130),
+            signIn.widthAnchor.constraint(equalToConstant: 250),
             signIn.heightAnchor.constraint(equalToConstant: 80)
             
         
@@ -85,23 +53,62 @@ class ViewController: UIViewController {
     
     @objc func signInClicked(){
         
-        Auth.auth().signIn(withEmail: username.text!, password: password.text!) { result, error in
+        
+        guard let clientID = FirebaseApp.app()?.options.clientID else { return }
+
+        // Create Google Sign In configuration object.
+        let config = GIDConfiguration(clientID: clientID)
+        GIDSignIn.sharedInstance.configuration = config
+
+        // Start the sign in flow!
+        GIDSignIn.sharedInstance.signIn(withPresenting: self) { [unowned self] result, error in
+          guard error == nil else {
+              print(error?.localizedDescription)
+              return
+          }
+
+          guard let user = result?.user,
+            let idToken = user.idToken?.tokenString
+          else {
+              print(error?.localizedDescription)
+              return
+          }
+
+          let credential = GoogleAuthProvider.credential(withIDToken: idToken,
+                                                         accessToken: user.accessToken.tokenString)
+
+          // ...
             
             
-            if error != nil{
-                self.makeEAAlert(alertTitle: "Error", alertLabel: "\(error!.localizedDescription) 😭")
-                print(error?.localizedDescription)
-            }else{
+            Auth.auth().signIn(with: credential) { result, error in
                 
-                let nav = UINavigationController(rootViewController: SceneDelegate().createTabbar())
-                nav.modalPresentationStyle = .overFullScreen
-                self.present(nav, animated: true)
-              
                 
+                if error != nil{
+                    self.makeEAAlert(alertTitle: "Error", alertLabel: "\(error!.localizedDescription) 😭")
+                    print(error?.localizedDescription)
+                }else{
+                    
+                    let nav = UINavigationController(rootViewController: SceneDelegate().createTabbar())
+                    nav.modalPresentationStyle = .overFullScreen
+                    self.present(nav, animated: true)
+                  
+                    
+                    
+                }
                 
             }
             
+            
+            
         }
+        
+        
+        
+        
+        
+        
+        
+       
 
     }
     

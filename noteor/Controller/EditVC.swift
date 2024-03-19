@@ -64,6 +64,7 @@ class EditVC: UIViewController, UICollectionViewDelegate, UICollectionViewDataSo
         
         configureCollectionView()
         configureTitle()
+        
     }
     
     
