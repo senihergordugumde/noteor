@@ -6,7 +6,8 @@
 //
 
 import UIKit
-
+import FirebaseAuth
+import FirebaseFirestore
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     var window: UIWindow?
@@ -17,10 +18,54 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         
         window = UIWindow(frame: windowScene.coordinateSpace.bounds)
         window?.windowScene = windowScene
-        window?.rootViewController = createTabbar()
-        window?.makeKeyAndVisible()
-        
-        
+         Auth.auth().addStateDidChangeListener { (auth, user) in
+             guard let user = user else {
+                 self.window?.rootViewController = self.createMainNC()
+                 self.window?.makeKeyAndVisible()
+                 return
+                 
+             }
+             for info in user.providerData {
+                 if info.providerID == "apple.com"{
+                     let appleUser = User(displayName: user.displayName ?? "", photoURL: user.photoURL ?? URL(string: "g")!, userID: user.uid)
+                     UserManager.shared.setUser(user: appleUser)
+                     self.window?.rootViewController = self.createTabbar()
+                     self.window?.makeKeyAndVisible()
+                 }
+                 else if info.providerID == "google.com"{
+                     let googleUser = User(displayName: user.displayName ?? "", photoURL: (user.photoURL ?? URL(string: ""))!, userID: user.uid)
+                     UserManager.shared.setUser(user: googleUser)
+                     self.window?.rootViewController = self.createTabbar()
+                     self.window?.makeKeyAndVisible()
+                 }
+                 else{
+                     let firestore = Firestore.firestore()
+                     firestore.collection("Accounts").document(user.uid).getDocument { snap, error in
+                         
+                         print("ID : \(user.uid)")
+                         
+                         guard let snap = snap else {
+                             
+                             return
+                         }
+                         
+                         do {
+                             var firebaseUser = try snap.data(as: User.self)
+                             UserManager.shared.setUser(user: firebaseUser)
+                             
+                             self.window?.rootViewController = self.createTabbar()
+                             self.window?.makeKeyAndVisible()
+                         }catch{
+                             
+                             print("firebase login error")
+                             
+                         }
+                     }
+                     
+                 }
+             }
+            
+        }
         
     }
 
@@ -30,7 +75,6 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     
     func createHomeNC() -> UINavigationController{
         let homeVC = HomeVC()
-        
         homeVC.tabBarItem = UITabBarItem(title: "Home", image: UIImage(systemName: "house.fill"), tag: 0)
         return UINavigationController(rootViewController: homeVC)
         
@@ -39,25 +83,51 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     
     
     func createMainNC() -> UINavigationController{
-        let mainViewController = ViewController()
+        let authService : AuthService = Authentication()
+        let viewModel = LoginViewModel(Authentication: authService)
+        let mainViewController = LoginVC(loginViewModel: viewModel)
         return UINavigationController(rootViewController: mainViewController)
         
     }
     
     
     func createNotesNC() -> UINavigationController{
-        let NotesVC = NotesVC()
+        let getService : GetService = Get()
+        let updateService : UpdateService = Update()
+        let viewModel = NotesViewModel(getService: getService, updateService: updateService)
+        let NotesVC = NotesVC(viewModel: viewModel)
         
         NotesVC.tabBarItem = UITabBarItem(title: "Tasks", image: UIImage(systemName: "book.pages.fill"), tag: 1)
         return UINavigationController(rootViewController: NotesVC)
         
     }
     
+    func createProfileNC() -> UINavigationController {
+        let authService : AuthService = Authentication()
+        let getService : GetService = Get()
+        let updateService : UpdateService = Update()
+        let postService :PostService = Post()
+        let viewModel = ProfileViewModel(getService: getService, authService: authService, updateService: updateService, postService: postService)
+        let profileVC = ProfileVC(viewModel: viewModel)
+        profileVC.tabBarItem = UITabBarItem(title: "Profile", image: UIImage(systemName: "person.crop.circle"), tag: 2)
+        
+        return UINavigationController(rootViewController: profileVC)
+    }
+    
+    
+    func createSettingsNC() -> UINavigationController {
+        
+        let settingsTVC = SettingsTVC()
+        settingsTVC.tabBarItem = UITabBarItem(title: "Settings", image: UIImage(systemName: "gear"), tag : 3)
+        
+        return UINavigationController(rootViewController: settingsTVC)
+    }
+    
     
      func createTabbar() -> UITabBarController{
         
         let tabbar = UITabBarController()
-        tabbar.viewControllers = [createHomeNC(),createNotesNC()]
+        tabbar.viewControllers = [createHomeNC(),createNotesNC(), createProfileNC(),createSettingsNC()]
          UITabBar.appearance().tintColor = UIColor(named: "Red")
          UITabBar.appearance().backgroundColor =  .secondarySystemBackground
          UITabBar.appearance().layer.cornerRadius = 10

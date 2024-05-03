@@ -13,9 +13,9 @@ struct Notes : Identifiable, Codable{
     
     @DocumentID var id: String? = UUID().uuidString
     var Title : String
-    var Color : String
+
     var Descr : String
-    var Lock : Bool
+
     var Categ : String
     var StartDate : Date
     var EndDate : Date
@@ -23,7 +23,8 @@ struct Notes : Identifiable, Codable{
     var EndTime : Date
     var isCompleted : String
     var tasks : [tasks]
-   
+    var password : String? = nil
+    var createDate : Date
     
 }
 
@@ -33,4 +34,14 @@ struct Notes : Identifiable, Codable{
 struct tasks : Codable {
     var taskName : String
     var taskStatus : Bool
+    
+    func toDict() -> [String : Any]{
+        
+        return [
+            "taskName" : taskName,
+            "taskStatus" : taskStatus
+         ]
+        }
+        
+    
 }

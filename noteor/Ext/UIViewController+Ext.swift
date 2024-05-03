@@ -12,6 +12,17 @@ import Speech
 
 extension UIViewController{
     
+    
+    @objc func keyboardWillShow(sender: NSNotification) {
+            view.frame.origin.y = 0
+            view.frame.origin.y = view.frame.origin.y - 150
+        }
+    
+    @objc func keyboardWillHide(sender : NSNotification){
+        view.frame.origin.y = 0
+
+    }
+    
     func configureBackground(view : UIView){
         
         var yellowTopImage : UIImageView={
@@ -86,7 +97,18 @@ extension UIViewController{
     }
          
          
-    
+    func makeEASureAlert(alertTitle : String, alertLabel : String, completion : @escaping () -> ()){
+        DispatchQueue.main.async {
+            let alert = SureAlertVC(alertTitle: alertTitle, alertLabel: alertLabel)
+            alert.modalPresentationStyle = .overFullScreen
+            alert.modalTransitionStyle = .crossDissolve
+            self.present(alert, animated: true)
+            
+            alert.okClicked = {
+                completion()
+            }
+        }
+    }
     
     func makeEAAlertTextField(alertTitle : String, completion : @escaping () -> ()) {
         
@@ -119,6 +141,11 @@ extension UIViewController{
     @objc func dismissKeyboard(){
      
         view.endEditing(true)
+    }
+    
+    func setKeyboardListening(){
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
+            NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
     }
     
 }

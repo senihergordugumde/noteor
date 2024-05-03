@@ -12,6 +12,7 @@ class EditVC: UIViewController, UICollectionViewDelegate, UICollectionViewDataSo
     let colorList = ["Pink","Gym","Food","Work","School","Purple"]
     let customTitle = EATitle(textAlignment: .left, fontSize: 16)
     let colorView = UIView()
+    let password = String()
     static var selectedColor = "Work"
     static var lock = false
     var collectionView : UICollectionView!
@@ -144,6 +145,7 @@ class EditVC: UIViewController, UICollectionViewDelegate, UICollectionViewDataSo
         if EditVC.lock == false{
             EditVC.lock = true
             self.navigationItem.rightBarButtonItems![0].image = UIImage(systemName: "lock")
+          
             print(EditVC.lock)
         }else{
             EditVC.lock = false

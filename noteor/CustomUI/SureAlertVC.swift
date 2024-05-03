@@ -1,20 +1,20 @@
 //
-//  AuthPassAlert.swift
+//  SureAlertVC.swift
 //  noteor
 //
-//  Created by Emir AKSU on 20.02.2024.
+//  Created by Emir AKSU on 2.05.2024.
 //
 
 import UIKit
 
-class AuthPassAlert: UIViewController {
-    var onAuthenticationSuccess: (() -> Void)?
+class SureAlertVC: UIViewController {
+    
+    var okClicked: (() -> Void)?
 
     let alertContainer = UIView()
     let alertTitle = EATitle(textAlignment: .center, fontSize: 16)
-    let textField = EATextField(placeholder: "Your Password", isSecureTextEntry: true, textAlignment: .center)
     let alertLabel = EALabel(textAlignment: .center, fontSize: 12)
-    let alertButton = EAButton(title: "Unlock", backgroundColor: .systemGreen, cornerRadius: 10)
+    let alertButton = EAButton(title: "Yes", backgroundColor: .systemGreen, cornerRadius: 10)
     let cancelButton = EAButton(title: "Cancel", backgroundColor: .systemRed, cornerRadius: 10)
     
     override func viewDidLoad() {
@@ -26,14 +26,15 @@ class AuthPassAlert: UIViewController {
 
     }
     
-    init(alertTitle : String){
+    init(alertTitle : String, alertLabel : String){
         super.init(nibName: nil, bundle: nil)
         self.alertTitle.text = alertTitle
+        self.alertLabel.text = alertLabel
         
 
         alertView()
         configureAlertTitle()
-        configureAlertTextField()
+        configureAlertLabel()
         configureAlertButton()
         configureCancelButton()
     }
@@ -78,27 +79,23 @@ class AuthPassAlert: UIViewController {
         
         ])
         
+        alertTitle.numberOfLines = 2
         
     }
     
-    private func configureAlertTextField(){
-        
-        alertContainer.addSubview(textField)
+    private func configureAlertLabel(){
+        alertContainer.addSubview(alertLabel)
         
         NSLayoutConstraint.activate([
         
-            textField.topAnchor.constraint(equalTo: alertTitle.topAnchor, constant: 35),
-            textField.centerXAnchor.constraint(equalTo: alertContainer.centerXAnchor),
-            textField.widthAnchor.constraint(equalToConstant: 220),
-            textField.heightAnchor.constraint(equalToConstant: 60)
+            alertLabel.topAnchor.constraint(equalTo: alertTitle.bottomAnchor, constant: 35),
+            alertLabel.centerXAnchor.constraint(equalTo: alertTitle.centerXAnchor),
+            alertLabel.widthAnchor.constraint(equalToConstant: 100),
+            alertLabel.heightAnchor.constraint(equalToConstant: 24)
             
-        
         ])
-        
-        alertLabel.numberOfLines = 10
-        
+       
     }
-    
     
     private func configureAlertButton(){
         
@@ -107,7 +104,7 @@ class AuthPassAlert: UIViewController {
         NSLayoutConstraint.activate([
         
             alertButton.bottomAnchor.constraint(equalTo: alertContainer.bottomAnchor, constant: -35),
-            alertButton.leadingAnchor.constraint(equalTo: textField.leadingAnchor),
+            alertButton.leadingAnchor.constraint(equalTo: alertContainer.leadingAnchor,constant: 30),
             alertButton.widthAnchor.constraint(equalToConstant: 100),
             alertButton.heightAnchor.constraint(equalToConstant: 30)
             
@@ -124,7 +121,7 @@ class AuthPassAlert: UIViewController {
         NSLayoutConstraint.activate([
         
             cancelButton.bottomAnchor.constraint(equalTo: alertContainer.bottomAnchor, constant: -35),
-            cancelButton.trailingAnchor.constraint(equalTo: textField.trailingAnchor),
+            cancelButton.trailingAnchor.constraint(equalTo: alertContainer.trailingAnchor, constant: -35),
             cancelButton.widthAnchor.constraint(equalToConstant: 100),
             cancelButton.heightAnchor.constraint(equalToConstant: 30)
             
@@ -137,20 +134,10 @@ class AuthPassAlert: UIViewController {
     
     
     @objc func okButton(){
-        
-        if "123" == "123" {
-            dismiss(animated: true) {
-                self.onAuthenticationSuccess?()
-            }
-        } else {
-            // Şifre yanlış uyarısı verebilirsiniz.
-            self.dismiss(animated: true)
-        }
-        
+        self.okClicked?()
     }
     
     @objc func cancelButtonClicked(){
-        
         self.dismiss(animated: true)
     }
     

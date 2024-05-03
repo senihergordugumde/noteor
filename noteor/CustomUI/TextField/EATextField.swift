@@ -8,12 +8,16 @@
 import UIKit
 
 class EATextField: UITextField {
+    
+    
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         
 
     }
-   
+    
+    var datePicker : UIDatePicker!
     
     init(placeholder : String , isSecureTextEntry : Bool,textAlignment : NSTextAlignment){
         super.init(frame:.zero)

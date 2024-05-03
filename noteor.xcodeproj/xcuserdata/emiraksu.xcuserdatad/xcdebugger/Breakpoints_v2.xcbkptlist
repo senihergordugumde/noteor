@@ -14,8 +14,8 @@
             filePath = "noteor/Controller/HomeVC.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "266"
-            endingLineNumber = "266"
+            startingLineNumber = "265"
+            endingLineNumber = "265"
             landmarkName = "tableView(_:cellForRowAt:)"
             landmarkType = "7">
             <Locations>
@@ -159,9 +159,7 @@
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "564"
-            endingLineNumber = "564"
-            landmarkName = "AddItemVC"
-            landmarkType = "3">
+            endingLineNumber = "564">
             <Locations>
                <Location
                   uuid = "5CB05C5A-25E9-42F0-97B0-B6AEB6DD8530 - 5d50463e60cb58c9"
@@ -237,6 +235,54 @@
                   startingLineNumber = "547"
                   endingLineNumber = "547"
                   offsetFromSymbolStart = "1412">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "34E17130-3C6D-4368-A63D-E65C31A5A06F"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "noteor/Supporting/SceneDelegate.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "27"
+            endingLineNumber = "27"
+            landmarkName = "scene(_:willConnectTo:options:)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "34E17130-3C6D-4368-A63D-E65C31A5A06F - 347ad0d790cab475"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 (__C.FIRAuth, Swift.Optional&lt;__C.FIRUser&gt;) -&gt; () in noteor.SceneDelegate.scene(_: __C.UIScene, willConnectTo: __C.UISceneSession, options: __C.UISceneConnectionOptions) -&gt; ()"
+                  moduleName = "noteor"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/emiraksu/Downloads/noteor-main%202/noteor/Supporting/SceneDelegate.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "27"
+                  endingLineNumber = "27"
+                  offsetFromSymbolStart = "2044">
+               </Location>
+               <Location
+                  uuid = "34E17130-3C6D-4368-A63D-E65C31A5A06F - 347ad0d790cab454"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 (__C.FIRAuth, Swift.Optional&lt;__C.FIRUser&gt;) -&gt; () in noteor.SceneDelegate.scene(_: __C.UIScene, willConnectTo: __C.UISceneSession, options: __C.UISceneConnectionOptions) -&gt; ()"
+                  moduleName = "noteor"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/emiraksu/Downloads/noteor-main%202/noteor/Supporting/SceneDelegate.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "28"
+                  endingLineNumber = "28"
+                  offsetFromSymbolStart = "388">
                </Location>
             </Locations>
          </BreakpointContent>

@@ -8,14 +8,15 @@
 import Foundation
 import UIKit
 
-extension AddItemVC{
+extension AddItemVC : UITableViewDataSource, UITableViewDelegate{
+    
     //MARK: - Task Height
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 50
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        toDoList.count
+        addItemViewModel.toDoList.count
     }
     
     //MARK: - Task Cell
@@ -23,12 +24,12 @@ extension AddItemVC{
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: toDoCell.id, for: indexPath) as! toDoCell
         
-        cell.set(task: toDoList[indexPath.row])
+        cell.set(task: addItemViewModel.toDoList[indexPath.row])
         
         cell.action = {
             
-            if self.toDoList[indexPath.row].taskStatus {
-                self.toDoList[indexPath.row].taskStatus = false
+            if self.addItemViewModel.toDoList[indexPath.row].taskStatus {
+                self.addItemViewModel.toDoList[indexPath.row].taskStatus = false
                 
                 DispatchQueue.main.async {
                     cell.deleteButton.setImage(UIImage(named: "closeDetail"), for: .normal)
@@ -38,43 +39,36 @@ extension AddItemVC{
             }
             
             else {
-                self.toDoList[indexPath.row].taskStatus = true
+                self.addItemViewModel.toDoList[indexPath.row].taskStatus = true
                 
                 DispatchQueue.main.async {
                     cell.deleteButton.setImage(UIImage(named: "checkDetail"), for: .normal)
 
                 }
-
-
             }
-
         }
-        
-        
         return cell
     }
-    
-  
     //MARK: - Task Delete
 
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         
-        
-        
         if editingStyle == .delete{
-            self.toDoList.remove(at: indexPath.row)
+            self.addItemViewModel.toDoList.remove(at: indexPath.row)
             
             tableView.deleteRows(at: [indexPath], with: .fade)
             
-            self.tableViewHeight?.constant = CGFloat(50 * self.toDoList.count)
+            self.addItemView.tableViewHeight?.constant = CGFloat(50 * self.addItemViewModel.toDoList.count)
             UIView.animate(withDuration: 1.0) {
                 
-                self.mainView.layoutIfNeeded()
+                self.addItemView.mainView.layoutIfNeeded()
         
             }
        
         }
-        self.tableView.reloadData()
+        self.addItemView.tableView.reloadData()
+        print(addItemViewModel.toDoList)
     }
+    
 }
 

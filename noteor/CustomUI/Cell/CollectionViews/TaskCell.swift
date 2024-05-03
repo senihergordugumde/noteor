@@ -264,7 +264,8 @@ class TaskCell: UICollectionViewCell {
         
         title.text = note.Title
         time.date = note.StartDate
-        colorView.backgroundColor = UIColor(named: note.Color)
+        label.text = note.Descr
+        colorView.backgroundColor = UIColor(named: "Work")
         categImage.image = UIImage(named: note.Categ)
         categText.text = note.Categ
         
@@ -280,13 +281,7 @@ class TaskCell: UICollectionViewCell {
         }
         
         
-        if note.Lock{
-            label.text = "Need Password 🔐"
-        }else{
-           
-            label.text = note.Descr
-        }
-        
+       
     }
     
     required init?(coder: NSCoder) {

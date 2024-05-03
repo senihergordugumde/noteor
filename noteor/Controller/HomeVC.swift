@@ -12,23 +12,17 @@ import FirebaseAuth
 class HomeVC: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource, UITableViewDelegate, UITableViewDataSource {
     
   
-    
-   
-    
-   
-    
     var categories = ["Work", "Food", "Gym", "School"]
     var notes : [Notes]?
-    
+    var user : User?
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        user = UserManager.shared.getUser()
         configureTopView()
         configurecolTableBack()
-        view.backgroundColor = UIColor(named: "Red")
+        view.backgroundColor =  UIColor(named: "DarkPink")
         getDocuments()
-        
-        
+        print("Home User \(user?.displayName)")
     }
     
     
@@ -43,7 +37,7 @@ class HomeVC: UIViewController, UICollectionViewDelegate, UICollectionViewDataSo
     private let colTableBack : UIView = {
        let view = UIView()
         
-        view.backgroundColor = .secondarySystemBackground
+        view.backgroundColor = UIColor(named: "Gray")
         view.translatesAutoresizingMaskIntoConstraints = false
         view.layer.cornerRadius = 20
 
@@ -109,10 +103,10 @@ class HomeVC: UIViewController, UICollectionViewDelegate, UICollectionViewDataSo
     }
     
     @objc func calendarButtonClicked(){
-        let destinationVC = CalendarVC()
+        let destinationVC = CalendarViewModel()
         destinationVC.notes = self.notes
         
-        self.navigationController?.pushViewController(destinationVC, animated: true)
+        self.navigationController?.pushViewController(CalendarVC(viewModel: destinationVC), animated: true)
     }
     
     
@@ -179,12 +173,16 @@ class HomeVC: UIViewController, UICollectionViewDelegate, UICollectionViewDataSo
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        
-        let destinationVC = AddItemVC()
+       
+        let postService : Post = Post()
+        let deleteService : Delete = Delete()
+        let updateService : Update = Update()
+        let addItemViewModel = AddItemViewModel(postService: postService, deleteService: deleteService, updateService: updateService)
+        let destinationVC = AddItemVC(addItemViewModel: addItemViewModel)
         destinationVC.selectedCateg = categories[indexPath.row]
         
         self.navigationController?.pushViewController(destinationVC, animated: true)
-        
+       
     }
     
     //MARK: - Today's Task Text
@@ -219,6 +217,7 @@ class HomeVC: UIViewController, UICollectionViewDelegate, UICollectionViewDataSo
         tableView = UITableView()
         guard let tableView = tableView else {return}
         colTableBack.addSubview(tableView)
+        tableView.backgroundColor = UIColor(named: "DarkGray")
         tableView.delegate = self
         tableView.dataSource = self
         tableView.translatesAutoresizingMaskIntoConstraints = false
@@ -289,7 +288,7 @@ class HomeVC: UIViewController, UICollectionViewDelegate, UICollectionViewDataSo
     private let topView : UIView = {
        let view = UIView()
         
-        view.backgroundColor = UIColor(named: "Red")
+        view.backgroundColor = UIColor(named: "DarkPink")
         view.translatesAutoresizingMaskIntoConstraints = false
     
        
@@ -321,7 +320,7 @@ class HomeVC: UIViewController, UICollectionViewDelegate, UICollectionViewDataSo
 
         let logo = UIImageView(image: UIImage(named: "logo"))
         let task = UIImageView(image: UIImage(named: "task"))
-      
+        let welcome = EATitle(textAlignment: .left, fontSize: 24)
         logo.translatesAutoresizingMaskIntoConstraints = false
         task.translatesAutoresizingMaskIntoConstraints = false
         
@@ -347,7 +346,16 @@ class HomeVC: UIViewController, UICollectionViewDelegate, UICollectionViewDataSo
 
         ])
         
-        
+        view.addSubview(welcome)
+        welcome.text = "Welcome, \(user?.displayName ?? " ") 🙂"
+        NSLayoutConstraint.activate([
+            
+            welcome.topAnchor.constraint(equalTo: logo.bottomAnchor, constant: 25),
+            welcome.leadingAnchor.constraint(equalTo: logo.leadingAnchor, constant: 10),
+            welcome.widthAnchor.constraint(equalToConstant: 300),
+            welcome.heightAnchor.constraint(equalToConstant: 30)
+            
+        ])
         
     }
     
